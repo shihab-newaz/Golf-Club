@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Facebook, Instagram, Youtube, Twitter } from "lucide-react";
 import Navbar from "./navbar";
 import Footer from "./footer";
+import SubscriptionTiers from "./subscription";
 
 const HomePage: React.FC = () => {
   return (
@@ -79,6 +80,8 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
+      <SubscriptionTiers />
+
       <Footer />
     </div>
   );

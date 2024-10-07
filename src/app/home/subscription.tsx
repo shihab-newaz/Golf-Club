@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { useTheme } from "next-themes";
 
 const tiers = [
   {
@@ -24,18 +25,23 @@ const tiers = [
   },
 ];
 
-const SubscriptionTiers: React.FC = () => {
+const SubscriptionTiers = () => {
+  const { theme } = useTheme();
+
   return (
-    <section className="py-24 bg-gray-50 dark:bg-gray-900">
+    <section className="py-24 bg-gradient-to-r from-white/90 via-gray-200/90 to-white/90 
+    dark:from-black dark:via-gray-900 dark:to-black transition-colors duration-300">
       <div className="container mx-auto px-4">
         <motion.h2 
-          className="text-4xl font-bold text-center mb-12"
+          className="text-4xl font-bold text-center mb-12 text-black dark:text-white"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           Membership Tiers
         </motion.h2>
+
+        {/* Tiers */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {tiers.map((tier, index) => (
             <motion.div
@@ -44,10 +50,10 @@ const SubscriptionTiers: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className="flex flex-col h-full">
+              <Card className="flex flex-col h-full bg-gray-500/50 dark:bg-black/40 text-black dark:text-white transition-colors duration-300">
                 <CardHeader>
                   <CardTitle>{tier.name}</CardTitle>
-                  <CardDescription>{tier.description}</CardDescription>
+                  <CardDescription className="dark:text-gray-300">{tier.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
                   <p className="text-3xl font-bold mb-6">{tier.price}<span className="text-sm font-normal">/year</span></p>
@@ -63,7 +69,15 @@ const SubscriptionTiers: React.FC = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full">Choose {tier.name}</Button>
+                  <Button 
+                    className="w-full bg-black dark:bg-white text-white dark:text-black 
+                               hover:bg-gray-800 dark:hover:bg-gray-200 
+                               border border-transparent hover:border-white dark:hover:border-black 
+                               transition-all duration-300 ease-in-out
+                               font-semibold tracking-wide uppercase"
+                  >
+                    Choose {tier.name}
+                  </Button>
                 </CardFooter>
               </Card>
             </motion.div>
