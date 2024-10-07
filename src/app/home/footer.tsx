@@ -2,10 +2,8 @@
 import React from "react";
 import { Facebook, Instagram, Twitter, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "next-themes";
 
 const Footer: React.FC = () => {
-  const { theme } = useTheme();
 
   return (
     <footer className="bg-white dark:bg-black text-black dark:text-white py-12 transition-colors duration-300">

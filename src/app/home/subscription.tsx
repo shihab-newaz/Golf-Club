@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { useTheme } from "next-themes";
 
 const tiers = [
   {
@@ -26,7 +25,6 @@ const tiers = [
 ];
 
 const SubscriptionTiers = () => {
-  const { theme } = useTheme();
 
   return (
     <section className="py-24 bg-gradient-to-r from-white/90 via-gray-200/90 to-white/90 
