@@ -44,4 +44,3 @@ export default async function EventsPage() {
   );
 }
 
-// The rest of the file (EventsHero and EventsList components) remains the same
