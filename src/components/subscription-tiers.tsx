@@ -2,9 +2,13 @@
 
 "use client";
 import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { useSession } from "next-auth/react";
+import { useRouter } from 'next/navigation';
+import { useToast } from "@/hooks/use-toast";
 
 const tiers = [
   {
@@ -27,7 +31,33 @@ const tiers = [
   },
 ];
 
-const SubscriptionTiers = () => {
+const SubscriptionTiers: React.FC = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleSubscription = (tierName: string) => {
+    if (status === "authenticated") {
+      // Redirect to payment page with tier information
+      router.push(`/payment?tier=${encodeURIComponent(tierName)}`);
+    } else {
+      // If user is not logged in, show a styled message with a login link
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to subscribe to a membership tier.",
+        action: (
+          <Link 
+            href="/login" 
+            className="font-medium text-green-600 dark:text-green-400 hover:underline"
+          >
+            Log in here
+          </Link>
+        ),
+        className: "bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-200 dark:border-gray-700",
+        duration: 5000,
+      });
+    }
+  };
 
   return (
     <section className="py-24 bg-gradient-to-r from-white/90 via-gray-200/90 to-white/90 
@@ -76,6 +106,7 @@ const SubscriptionTiers = () => {
                                border border-transparent hover:border-white dark:hover:border-black 
                                transition-all duration-300 ease-in-out
                                font-semibold tracking-wide uppercase"
+                    onClick={() => handleSubscription(tier.name)}
                   >
                     Choose {tier.name}
                   </Button>

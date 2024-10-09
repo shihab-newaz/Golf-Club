@@ -98,13 +98,11 @@ const Navbar: React.FC = () => {
             {session ? (
               <HoverDropdownMenu
                 trigger={
-                  <Button
-                    variant="ghost"
-                    className="text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
-                  >
+                  <div className="flex items-center cursor-pointer text-black dark:text-white hover:bg-gray-200 
+                  dark:hover:bg-gray-700 px-3 py-2 rounded-md">
                     <User className="mr-2 h-5 w-5" />
-                    {session.user?.name}
-                  </Button>
+                    <span>{session.user?.name}</span>
+                  </div>
                 }
                 items={dropdownItems}
               />
