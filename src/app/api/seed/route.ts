@@ -1,5 +1,5 @@
 // // app/api/seed/route.ts
-// import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 // import dbConnect from '@/lib/mongoose';
 // import Event from '@/models/Event';
 
@@ -36,19 +36,19 @@
 //   }
 // ];
 
-// export async function GET() {
-//   try {
-//     await dbConnect();
+export async function GET() {
+  try {
+    // await dbConnect();
     
-//     // Clear existing events
-//     await Event.deleteMany({});
+    // // Clear existing events
+    // await Event.deleteMany({});
     
-//     // Insert new events
-//     await Event.insertMany(events);
+    // // Insert new events
+    // await Event.insertMany(events);
     
-//     return NextResponse.json({ message: 'Database seeded successfully' }, { status: 200 });
-//   } catch (error) {
-//     console.error('Seeding error:', error);
-//     return NextResponse.json({ error: 'Failed to seed database' }, { status: 500 });
-//   }
-// }
+    return NextResponse.json({ message: 'Database seeded successfully' }, { status: 200 });
+  } catch (error) {
+    console.error('Seeding error:', error);
+    return NextResponse.json({ error: 'Failed to seed database' }, { status: 500 });
+  }
+}
