@@ -1,18 +1,13 @@
 // app/courses/page.tsx
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const images = [
-  '/clubhouse.jpg',
-  '/upcoming.png',
-  '/golf.jpg',
-  '/ai.png',
-];
+const images = ["/clubhouse.jpg", "/upcoming.png", "/golf.jpg", "/ai.png"];
 
 const KoreaGolfCoursePage: React.FC = () => {
   const [currentImage, setCurrentImage] = useState(0);
@@ -43,7 +38,12 @@ const KoreaGolfCoursePage: React.FC = () => {
             animate={{ opacity: index === currentImage ? 1 : 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Image src={src} alt={`Korea golf course ${index + 1}`} layout="fill" objectFit="cover" />
+            <Image
+              src={src}
+              alt={`Korea golf course ${index + 1}`}
+              layout="fill"
+              objectFit="cover"
+            />
           </motion.div>
         ))}
         <Button
@@ -63,52 +63,70 @@ const KoreaGolfCoursePage: React.FC = () => {
       </section>
 
       <main className="flex-grow container mx-auto px-4 py-8">
-        <motion.h1 
+        <motion.h1
           className="text-4xl font-bold mb-6 text-green-800 dark:text-white"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Jeju Island Golf Resort
+          Daeho Country Club
         </motion.h1>
 
-        <motion.div 
+        <motion.div
           className="grid md:grid-cols-2 gap-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <div>
-            <h2 className="text-2xl font-semibold mb-4 text-green-700 dark:text-white">Experience World-Class Golfing in Paradise</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-green-700 dark:text-white">
+              Experience World-Class Golfing in Paradise
+            </h2>
             <p className="mb-4 text-gray-700 dark:text-gray-300">
-              Nestled on the breathtaking Jeju Island, our golf resort offers an unparalleled golfing experience amidst stunning natural beauty. With meticulously designed courses that blend seamlessly with the island's volcanic landscape, every hole presents a unique challenge and picturesque views.
+              Nestled on the breathtaking Jeju Island, our golf resort offers an
+              unparalleled golfing experience amidst stunning natural beauty.
+              With meticulously designed courses that blend seamlessly with the
+              island's volcanic landscape, every hole presents a unique
+              challenge and picturesque views.
             </p>
             <p className="mb-4 text-gray-700 dark:text-gray-300">
-              Our championship 18-hole course, designed by renowned architect Tom Fazio, caters to golfers of all skill levels. Enjoy the gentle sea breezes, the lush green fairways, and the strategic bunkers that make every round memorable.
+              Our championship 18-hole course, designed by renowned architect
+              Tom Fazio, caters to golfers of all skill levels. Enjoy the gentle
+              sea breezes, the lush green fairways, and the strategic bunkers
+              that make every round memorable.
             </p>
           </div>
           <div>
-            <h2 className="text-2xl font-semibold mb-4 text-green-700 dark:text-white">Resort Amenities</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-green-700 dark:text-white">
+              Resort Amenities
+            </h2>
             <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
               <li>Luxurious clubhouse with panoramic ocean views</li>
               <li>State-of-the-art practice facilities and driving range</li>
               <li>Professional golf instruction and clinics</li>
-              <li>Exquisite dining options featuring local and international cuisine</li>
+              <li>
+                Exquisite dining options featuring local and international
+                cuisine
+              </li>
               <li>Relaxing spa treatments for post-game rejuvenation</li>
               <li>Accommodation packages at our 5-star resort</li>
             </ul>
           </div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="mt-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <h2 className="text-2xl font-semibold mb-4 text-green-700 dark:text-white">Book Your Golfing Getaway</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-green-700 dark:text-white">
+            Book Your Golfing Getaway
+          </h2>
           <p className="mb-4 text-gray-700 dark:text-gray-300">
-            Experience the magic of golfing on Jeju Island. Whether you're planning a solo trip, a corporate event, or a golfing holiday with friends, we offer tailored packages to suit your needs.
+            Experience the magic of golfing on Jeju Island. Whether you're
+            planning a solo trip, a corporate event, or a golfing holiday with
+            friends, we offer tailored packages to suit your needs.
           </p>
           <Button className="bg-green-600 hover:bg-green-700 text-white">
             Reserve Your Tee Time

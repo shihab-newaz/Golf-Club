@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
     },
     {
       label: (
-        <div className="flex items-center text-red-500 dark:text-red-400">
+        <div className="flex items-center text-destructive">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sign out</span>
         </div>
@@ -45,26 +45,18 @@ const Navbar: React.FC = () => {
   ];
 
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-400/50 via-gray-300/50 to-gray-400/50 dark:from-black/70 
-    dark:via-gray-800/70 dark:to-black/70 transition-colors duration-300"
-    >
+    <header className="fixed top-0 left-0 right-0 z-50 bg-foreground-alt/60 dark:bg-background-alt/80 backdrop-blur-sm shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4 md:justify-start md:space-x-10">
           <div className="flex justify-start lg:w-0 lg:flex-1">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full border-2 border-black dark:border-white flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full border-2 border-primary flex items-center justify-center">
                 <Link href="/">
-                  <span className="text-black font-bold dark:text-white">
-                    GC
-                  </span>
+                  <span className="text-primary font-bold">GC</span>
                 </Link>
               </div>
               <Link href="/">
-                {" "}
-                <span className="text-black font-semibold dark:text-white">
-                  GOLF CLUB
-                </span>
+                <span className="text-base font-semibold hover:text-link">GOLF CLUB</span>
               </Link>
             </div>
           </div>
@@ -77,19 +69,19 @@ const Navbar: React.FC = () => {
           <nav className="hidden md:flex space-x-10">
             <Link
               href="/courses"
-              className="text-base font-medium text-black hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+              className="text-base font-medium text-foreground hover:text-link"
             >
               COURSES
             </Link>
             <Link
               href="/events"
-              className="text-base font-medium text-black hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+              className="text-base font-medium text-foreground hover:text-link"
             >
               EVENTS
             </Link>
             <Link
               href="/about"
-              className="text-base font-medium text-black hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+              className="text-base font-medium text-foreground hover:text-link"
             >
               ABOUT
             </Link>
@@ -98,8 +90,7 @@ const Navbar: React.FC = () => {
             {session ? (
               <HoverDropdownMenu
                 trigger={
-                  <div className="flex items-center cursor-pointer text-black dark:text-white hover:bg-gray-200 
-                  dark:hover:bg-gray-700 px-3 py-2 rounded-md">
+                  <div className="flex items-center cursor-pointer text-foreground hover:text-link px-3 py-2 rounded-md">
                     <User className="mr-2 h-5 w-5" />
                     <span>{session.user?.name}</span>
                   </div>
@@ -108,10 +99,8 @@ const Navbar: React.FC = () => {
               />
             ) : (
               <Link href="/login" passHref>
-                <Button
-                  variant="ghost"
-                  className="text-black font-semibold hover:bg-gray-200 hover:text-black dark:text-white dark:hover:bg-gray-700 
-                  dark:hover:text-white flex items-center space-x-2"
+                <Button            
+                  className="text-foreground bg-inherit hover:text-link hover:bg-transparent flex items-center space-x-2"
                 >
                   <LogIn size={18} />
                   <span>LOGIN</span>
@@ -128,37 +117,35 @@ const Navbar: React.FC = () => {
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link
             href="/about"
-            className="block px-3 py-2 rounded-md text-base font-medium text-black hover:text-gray-700 hover:bg-gray-50 dark:text-gray-300
-             dark:hover:text-white dark:hover:bg-gray-700"
+            className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-link hover:bg-background-alt"
           >
             ABOUT
           </Link>
           <Link
             href="/courses"
-            className="block px-3 py-2 rounded-md text-base font-medium text-black hover:text-gray-700 hover:bg-gray-50 dark:text-gray-300 
-            dark:hover:text-white dark:hover:bg-gray-700"
+            className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-link hover:bg-background-alt"
           >
             COURSES
           </Link>
           <Link
             href="/events"
-            className="text-base font-medium text-black hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+            className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-link hover:bg-background-alt"
           >
             EVENTS
           </Link>
         </div>
-        <div className="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700">
+        <div className="pt-4 pb-3 border-t border-muted">
           <div className="flex items-center px-5">
             {session ? (
               <>
                 <div className="flex-shrink-0">
-                  <User className="h-10 w-10 rounded-full" />
+                  <User className="h-10 w-10 rounded-full text-primary" />
                 </div>
                 <div className="ml-3">
-                  <div className="text-base font-medium leading-none text-gray-800 dark:text-white">
+                  <div className="text-base font-medium leading-none text-foreground">
                     {session.user?.name}
                   </div>
-                  <div className="text-sm font-medium leading-none text-gray-500 dark:text-gray-400">
+                  <div className="text-sm font-medium leading-none text-muted-foreground">
                     {session.user?.email}
                   </div>
                 </div>
@@ -167,8 +154,7 @@ const Navbar: React.FC = () => {
               <Link href="/login" passHref>
                 <Button
                   variant="ghost"
-                  className="text-black font-semibold hover:bg-gray-200 hover:text-black dark:text-white dark:hover:bg-gray-700 
-                  dark:hover:text-white flex items-center space-x-2"
+                  className="text-foreground hover:text-primary hover:bg-background-alt flex items-center space-x-2"
                 >
                   <LogIn size={18} />
                   <span>LOGIN</span>
@@ -185,8 +171,7 @@ const Navbar: React.FC = () => {
                 <button
                   key={index}
                   onClick={item.onClick}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 
-                  dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-primary hover:bg-background-alt"
                 >
                   {item.label}
                 </button>

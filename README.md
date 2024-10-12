@@ -1,7 +1,5 @@
 # Golf Club Website
 
-![Golf Club Website](https://your-image-url-here.com/screenshot.png)
-
 A minimalist and elegant website for a luxury golf club, built with modern web technologies.
 
 ## 🌐 Live Demo
