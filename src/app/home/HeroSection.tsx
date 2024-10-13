@@ -1,6 +1,8 @@
+// app/home/HeroSection.tsx
 "use client";
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const HeroSection: React.FC = () => {
@@ -23,8 +25,9 @@ const HeroSection: React.FC = () => {
         <Button
           size="lg"
           className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full
-          transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl">
-        Book a Tee Time
+          transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
+        >
+          <Link href="/booking">Book a Tee Time</Link>
         </Button>
       </div>
     </section>

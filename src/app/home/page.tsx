@@ -1,8 +1,8 @@
+// app/home/page.tsx
 import React from "react";
 import HeroSection from "./HeroSection";
 import FeaturedCourses from "./FeaturedCourses";
 import MembershipSection from "./MembershipSection";
-import WeatherSection from "./WeatherSection";
 import Testimonials from "./Testimonials";
 
 export default function HomePage() {

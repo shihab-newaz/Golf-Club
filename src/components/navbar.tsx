@@ -1,183 +1,205 @@
-// src/components/navbar.tsx
-
 "use client";
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, User, Settings, LayoutDashboard } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { useSession, signOut } from "next-auth/react";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { HoverDropdownMenu } from "@/components/ui/hover-dropdown-menu";
-import HamburgerMenu from "@/components/ui/hamburger-menu";
+import { useSession, signOut } from "next-auth/react";
+import { LogIn, User, Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Navbar: React.FC = () => {
   const { data: session } = useSession();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const dropdownItems = [
-    {
-      label: (
-        <div className="flex items-center">
-          <LayoutDashboard className="mr-2 h-4 w-4" />
-          <span>Dashboard</span>
-        </div>
-      ),
-      onClick: () => console.log("Dashboard clicked"),
-    },
-    {
-      label: (
-        <div className="flex items-center">
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Settings</span>
-        </div>
-      ),
-      onClick: () => console.log("Settings clicked"),
-    },
-    {
-      label: (
-        <div className="flex items-center text-destructive">
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Sign out</span>
-        </div>
-      ),
-      onClick: () => signOut(),
-    },
-  ];
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const MobileMenu = () => (
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="md:hidden">
+          <Menu />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="right" className="w-[300px] sm:w-[400px] text-black dark:text-white">
+        <nav className="flex flex-col gap-4">
+          <Link href="/courses" onClick={() => setIsOpen(false)}>
+            <Button variant="ghost" className="w-full justify-start">COURSES</Button>
+          </Link>
+          <Link href="/events" onClick={() => setIsOpen(false)}>
+            <Button variant="ghost" className="w-full justify-start">EVENTS</Button>
+          </Link>
+          <Link href="/about" onClick={() => setIsOpen(false)}>
+            <Button variant="ghost" className="w-full justify-start">ABOUT</Button>
+          </Link>
+          {session ? (
+            <>
+              <Link href="/dashboard" onClick={() => setIsOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start">Dashboard</Button>
+              </Link>
+              <Link href="/settings" onClick={() => setIsOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start">Settings</Button>
+              </Link>
+              <Button variant="ghost" className="w-full justify-start" onClick={() => { signOut(); setIsOpen(false); }}>
+                Sign out
+              </Button>
+            </>
+          ) : (
+            <Link href="/login" onClick={() => setIsOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start">
+                <LogIn className="mr-2 h-5 w-5" />
+                LOGIN
+              </Button>
+            </Link>
+          )}
+        </nav>
+      </SheetContent>
+    </Sheet>
+  );
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-foreground-alt/60 dark:bg-background-alt/80 backdrop-blur-sm shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4 md:justify-start md:space-x-10">
-          <div className="flex justify-start lg:w-0 lg:flex-1">
-            <div className="flex items-center space-x-2">
+        <div className="flex justify-between items-center py-4">
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-full border-2 border-primary flex items-center justify-center">
-                <Link href="/">
-                  <span className="text-primary font-bold">GC</span>
-                </Link>
+                <span className="text-primary font-bold">GC</span>
               </div>
-              <Link href="/">
-                <span className="text-base font-semibold hover:text-link">GOLF CLUB</span>
-              </Link>
-            </div>
-          </div>
-          <div className="-mr-2 -my-2 md:hidden">
-            <HamburgerMenu
-              isOpen={isMenuOpen}
-              toggle={() => setIsMenuOpen(!isMenuOpen)}
-            />
-          </div>
-          <nav className="hidden md:flex space-x-10">
-            <Link
-              href="/courses"
-              className="text-base font-medium text-foreground hover:text-link"
-            >
-              COURSES
+              <span className="text-base font-semibold hover:text-link">
+                GOLF CLUB
+              </span>
             </Link>
-            <Link
-              href="/events"
-              className="text-base font-medium text-foreground hover:text-link"
-            >
-              EVENTS
-            </Link>
-            <Link
-              href="/about"
-              className="text-base font-medium text-foreground hover:text-link"
-            >
-              ABOUT
-            </Link>
-          </nav>
-          <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-            {session ? (
-              <HoverDropdownMenu
-                trigger={
-                  <div className="flex items-center cursor-pointer text-foreground hover:text-link px-3 py-2 rounded-md">
-                    <User className="mr-2 h-5 w-5" />
-                    <span>{session.user?.name}</span>
-                  </div>
-                }
-                items={dropdownItems}
-              />
-            ) : (
-              <Link href="/login" passHref>
-                <Button            
-                  className="text-foreground bg-inherit hover:text-link hover:bg-transparent flex items-center space-x-2"
-                >
-                  <LogIn size={18} />
-                  <span>LOGIN</span>
-                </Button>
-              </Link>
-            )}
-            <ThemeToggle />
           </div>
-        </div>
-      </div>
 
-      {/* Mobile menu, show/hide based on menu state. */}
-      <div className={`${isMenuOpen ? "block" : "hidden"} md:hidden`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link
-            href="/about"
-            className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-link hover:bg-background-alt"
-          >
-            ABOUT
-          </Link>
-          <Link
-            href="/courses"
-            className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-link hover:bg-background-alt"
-          >
-            COURSES
-          </Link>
-          <Link
-            href="/events"
-            className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-link hover:bg-background-alt"
-          >
-            EVENTS
-          </Link>
-        </div>
-        <div className="pt-4 pb-3 border-t border-muted">
-          <div className="flex items-center px-5">
-            {session ? (
-              <>
-                <div className="flex-shrink-0">
-                  <User className="h-10 w-10 rounded-full text-primary" />
-                </div>
-                <div className="ml-3">
-                  <div className="text-base font-medium leading-none text-foreground">
-                    {session.user?.name}
-                  </div>
-                  <div className="text-sm font-medium leading-none text-muted-foreground">
-                    {session.user?.email}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <Link href="/login" passHref>
-                <Button
-                  variant="ghost"
-                  className="text-foreground hover:text-primary hover:bg-background-alt flex items-center space-x-2"
-                >
-                  <LogIn size={18} />
-                  <span>LOGIN</span>
-                </Button>
-              </Link>
-            )}
-            <div className="ml-auto">
-              <ThemeToggle />
-            </div>
-          </div>
-          {session && (
-            <div className="mt-3 px-2 space-y-1">
-              {dropdownItems.map((item, index) => (
-                <button
-                  key={index}
-                  onClick={item.onClick}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-primary hover:bg-background-alt"
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
+          {!isMobile && (
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <Link href="/courses" legacyBehavior passHref>
+                    <NavigationMenuLink className="px-4 py-2 text-sm font-medium text-foreground hover:text-link">
+                      COURSES
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link href="/events" legacyBehavior passHref>
+                    <NavigationMenuLink className="px-4 py-2 text-sm font-medium text-foreground hover:text-link">
+                      EVENTS
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link href="/about" legacyBehavior passHref>
+                    <NavigationMenuLink className="px-4 py-2 text-sm font-medium text-foreground hover:text-link">
+                      ABOUT
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+                {session ? (
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="px-4 py-2 text-sm font-medium bg-transparent hover:bg-transparent text-foreground hover:text-link">
+                      <User className="mr-2 h-5 w-5" />
+                      <span>{session.user?.name}</span>
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <a
+                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                              href="/"
+                            >
+                              <User className="h-6 w-6" />
+                              <div className="mb-2 mt-4 text-lg font-medium">
+                                {session.user?.name}
+                              </div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                Manage your account and settings
+                              </p>
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        <li>
+                          <NavigationMenuLink asChild>
+                            <a
+                              href="/dashboard"
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            >
+                              <div className="text-sm font-medium leading-none">
+                                Dashboard
+                              </div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                View your stats and activity
+                              </p>
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        <li>
+                          <NavigationMenuLink asChild>
+                            <a
+                              href="/settings"
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            >
+                              <div className="text-sm font-medium leading-none">
+                                Settings
+                              </div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                Manage your preferences
+                              </p>
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        <li>
+                          <button
+                            onClick={() => signOut()}
+                            className="w-full text-left select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">
+                              Sign out
+                            </div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Log out of your account
+                            </p>
+                          </button>
+                        </li>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                ) : (
+                  <NavigationMenuItem>
+                    <Link href="/login" legacyBehavior passHref>
+                      <NavigationMenuLink className="px-4 py-2 text-sm font-medium text-foreground hover:text-link flex items-center">
+                        <LogIn className="mr-2 h-5 w-5" />
+                        LOGIN
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                )}
+              </NavigationMenuList>
+            </NavigationMenu>
           )}
+
+          <div className="flex items-center">
+            <ThemeToggle />
+            {isMobile && <MobileMenu />}
+          </div>
         </div>
       </div>
     </header>

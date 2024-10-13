@@ -1,3 +1,5 @@
+// app/payment/page.tsx
+
 import { getServerSession } from "next-auth/next"; 
 import { authOptions } from "@/utils/authOptions"; 
 import PaymentClient from "./payment-client"; 

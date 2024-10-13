@@ -1,3 +1,4 @@
+// app/home/MembershipSection.tsx
 "use client";
 import React from "react";
 import Link from "next/link";
