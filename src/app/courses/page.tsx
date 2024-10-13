@@ -22,7 +22,6 @@ async function getWeatherData() {
   }
 }
 
-
 async function getCoursesData() {
   // This is a placeholder. In a real application, you would fetch this data from your API or database.
   return [
@@ -56,7 +55,11 @@ export default async function KoreaGolfCoursePage() {
       <ImageCarousel images={images} />
       <main className="flex-grow container mx-auto px-4 py-8">
         <CoursesSection courses={coursesData} />
-        <WeatherSection weatherData={weatherData} />
+        {weatherData ? (
+          <WeatherSection weatherData={weatherData} />
+        ) : (
+          <p>Weather data currently unavailable</p>
+        )}{" "}
       </main>
     </div>
   );

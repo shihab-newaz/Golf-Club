@@ -13,6 +13,9 @@ interface WeatherSectionProps {
 }
 
 const WeatherSection: React.FC<WeatherSectionProps> = ({ weatherData }) => {
+  if (!weatherData) {
+    return <p>Weather data currently unavailable</p>; 
+  }
   const WeatherIcon = () => {
     if (weatherData.condition.includes('sun') || weatherData.condition.includes('clear')) {
       return <Sun className="h-8 w-8 text-yellow-400" />;
