@@ -35,6 +35,7 @@ const EventsList: React.FC<EventsListProps> = ({ events }) => (
               alt={event.title}
               fill
               style={{ objectFit: "cover" }}
+              sizes='(100vw, 100vh)'
               className="group-hover:scale-105 transition-transform duration-300"
             />
           </div>

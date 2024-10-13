@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --background: 0 0% 96.1%; /* White Smoke (#F5F5F5) */
-    --background-alt: 54.7 66.7% 80%; 
+    --background-alt: 54.7 66.7% 80%; /*PaleGoldenRod (#EEE8AA)*/
     --foreground-alt: 204 20% 26.1%; /* Charcoal (#36454F) */
     --foreground: 0 0% 100%; /* White (#FFFFFF) */
 

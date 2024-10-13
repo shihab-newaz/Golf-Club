@@ -1,6 +1,6 @@
-import { getServerSession } from "next-auth/next"; // Correct import for server-side session handling
-import { authOptions } from "@/utils/authOptions"; // Import your authOptions
-import PaymentClient from "./payment-client"; // Import your PaymentClient component
+import { getServerSession } from "next-auth/next"; 
+import { authOptions } from "@/utils/authOptions"; 
+import PaymentClient from "./payment-client"; 
 
 export default async function PaymentPage() {
   const session = await getServerSession(authOptions);

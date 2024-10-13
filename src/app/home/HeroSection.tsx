@@ -9,13 +9,13 @@ const HeroSection: React.FC = () => {
       <Image
         src="/golf.jpg"
         alt="Beautiful golf course"
-        layout="fill"
-        objectFit="cover"
+        style={{ objectFit: "cover" }}
+        fill
         className="absolute inset-0 z-0"
       />
       <div className="relative z-10 text-center">
         <h2 className="text-4xl md:text-6xl font-bold mb-4">
-          Welcome to Dae
+          Welcome to Daeho
         </h2>
         <p className="text-xl md:text-2xl mb-8">
           Experience the finest golf in the heart of nature

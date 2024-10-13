@@ -24,7 +24,7 @@ const FeaturedCourses = () => {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="h-full" // Ensure the motion div takes full height
+              className="h-full"
             >
               <Card className="flex flex-col h-full"> {/* Use flex to allow footer to stick to bottom */}
                 <Image
@@ -32,6 +32,7 @@ const FeaturedCourses = () => {
                   alt={course.name}
                   width={400}
                   height={300}
+                  priority
                   className="w-full h-48 object-cover"
                 />
                 <CardContent className="flex-grow p-4"> {/* flex-grow allows content to expand */}

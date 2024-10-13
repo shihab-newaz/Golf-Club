@@ -40,9 +40,10 @@ const KoreaGolfCoursePage: React.FC = () => {
           >
             <Image
               src={src}
-              alt={`Korea golf course ${index + 1}`}
-              layout="fill"
-              objectFit="cover"
+              alt={`Daeho golf course ${index + 1}`}
+              fill
+              style={{ objectFit: "cover" }}
+              priority
             />
           </motion.div>
         ))}

@@ -17,6 +17,7 @@ const EventsHero = () => (
       alt="Golf Course Events"
       fill
       style={{ objectFit: "cover" }}
+      sizes='(100vw, 100vh)'
       quality={100}
       priority
     />

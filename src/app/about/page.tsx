@@ -21,13 +21,15 @@ const AboutPage: React.FC = () => {
             </h1>
             <div className="w-24 h-1 bg-foreground-alt dark:bg-foreground mx-auto mb-6"></div>
             <p className="text-lg text-black dark:text-gray-300">
-              Experience golfing excellence at its finest. Our club offers a perfect blend of 
-              challenging courses, luxurious amenities, and a welcoming community.
+              Experience golfing excellence at its finest. Our club offers a
+              perfect blend of challenging courses, luxurious amenities, and a
+              welcoming community.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <motion.div
+              className="relative w-full aspect-[3/2] rounded-lg shadow-lg overflow-hidden"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -35,9 +37,10 @@ const AboutPage: React.FC = () => {
               <Image
                 src="/clubhouse.jpg"
                 alt="Golf Club Clubhouse"
-                width={600}
-                height={400}
-                className="rounded-lg shadow-lg"
+                fill
+                sizes="(100vw, 100vh)"
+                style={{ objectFit: "cover" }}
+                priority
               />
             </motion.div>
 
@@ -47,11 +50,14 @@ const AboutPage: React.FC = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="space-y-6"
             >
-              <h2 className="text-3xl font-bold text-black dark:text-foreground">Our Legacy</h2>
+              <h2 className="text-3xl font-bold text-black dark:text-foreground">
+                Our Legacy
+              </h2>
               <p className="text-black dark:text-gray-300">
-                Founded in 1925, our club has been a cornerstone of golfing excellence for nearly 
-                a century. We've hosted numerous professional tournaments and have been the training 
-                ground for several golf legends.
+                Founded in 1925, our club has been a cornerstone of golfing
+                excellence for nearly a century. We've hosted numerous
+                professional tournaments and have been the training ground for
+                several golf legends.
               </p>
               <Button className="bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90">
                 Explore Our History
