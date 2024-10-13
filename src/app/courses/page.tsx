@@ -14,6 +14,7 @@ async function getWeatherData() {
     if (!res.ok) {
       throw new Error("Failed to fetch weather data");
     }
+    console.log("Weather data fetched successfully");
     return res.json();
   } catch (error) {
     console.error("Error fetching weather data:", error);

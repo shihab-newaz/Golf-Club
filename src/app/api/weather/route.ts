@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 
 const WEATHER_API_URL = 'https://weatherapi-com.p.rapidapi.com/current.json';
-const DEFAULT_LOCATION = '41.1439,-81.3365'; // Default coordinates
+const DEFAULT_LOCATION = '24.8526,89.3730'; // Default coordinates
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
