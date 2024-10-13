@@ -1,8 +1,14 @@
 // app/api/weather/route.ts
 import { NextResponse } from 'next/server';
 
-export async function GET() {
-  const url = 'https://weatherapi-com.p.rapidapi.com/current.json?q=41.1439,-81.3365';
+const WEATHER_API_URL = 'https://weatherapi-com.p.rapidapi.com/current.json';
+const DEFAULT_LOCATION = '41.1439,-81.3365'; // Default coordinates
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const location = searchParams.get('location') || DEFAULT_LOCATION;
+
+  const url = `${WEATHER_API_URL}?q=${encodeURIComponent(location)}`;
   const options = {
     method: 'GET',
     headers: {
@@ -12,7 +18,16 @@ export async function GET() {
   };
 
   try {
+    if (!process.env.RAPIDAPI_WEATHER_API_KEY) {
+      throw new Error('RAPIDAPI_WEATHER_API_KEY is not set');
+    }
+
     const response = await fetch(url, options);
+    
+    if (!response.ok) {
+      throw new Error(`Weather API responded with status: ${response.status}`);
+    }
+
     const result = await response.json();
     
     return NextResponse.json({
@@ -21,6 +36,9 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Error fetching weather data:', error);
-    return NextResponse.json({ error: 'Failed to fetch weather data' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch weather data', details: (error as Error).message },
+      { status: 500 }
+    );
   }
 }

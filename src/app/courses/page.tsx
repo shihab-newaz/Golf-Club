@@ -7,14 +7,20 @@ import CoursesSection from "./CourseSection";
 const images = ["/clubhouse.jpg", "/upcoming.png", "/golf.jpg", "/ai.png"];
 
 async function getWeatherData() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/weather`, {
-    next: { revalidate: 3600 },
-  });
-  if (!res.ok) {
-    throw new Error("Failed to fetch weather data");
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/weather`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) {
+      throw new Error("Failed to fetch weather data");
+    }
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching weather data:", error);
+    return null;
   }
-  return res.json();
 }
+
 
 async function getCoursesData() {
   // This is a placeholder. In a real application, you would fetch this data from your API or database.
