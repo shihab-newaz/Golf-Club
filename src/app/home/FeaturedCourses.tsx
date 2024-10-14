@@ -8,12 +8,12 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 const featuredCourses = [
-  { name: "Pine Valley", image: "/courses/course (1).JPG", description: "Challenging 18-hole course set in beautiful pine forests." },
-  { name: "Ocean Links", image: "/courses/course (12).JPG", description: "Scenic coastal course with breathtaking ocean views." },
-  { name: "Mountain Peak", image: "/courses/course (40).JPG", description: "High-altitude course offering unique golfing experience." },
-  { name: "Bueng Ratchaburi", image: "/courses/course (23).JPG", description: "High-altitude course offering unique golfing experience." },
-  { name: "Bueng Aram", image: "/courses/course (35).JPG", description: "High-altitude course offering unique golfing experience." },
-  { name: "Bueng Kapit", image: "/courses/course (7).JPG", description: "High-altitude course offering unique golfing experience." },
+  { name: "Pine Valley", image: "/courses/course (2).JPG", description: "Challenging 18-hole course set in beautiful pine forests." },
+  { name: "Ocean Links", image: "/courses/course (11).JPG", description: "Scenic coastal course with breathtaking ocean views." },
+  { name: "Mountain Peak", image: "/courses/course (39).JPG", description: "High-altitude course offering unique golfing experience." },
+  { name: "Bueng Ratchaburi", image: "/courses/course (23).JPG", description: "Scenic lakeside course with lush greenery." },
+  { name: "Bueng Aram", image: "/courses/course (35).JPG", description: "Traditional Thai-style course with water hazards." },
+  { name: "Bueng Kapit", image: "/courses/course (7).JPG", description: "Challenging course with stunning mountain views." },
 ];
 
 
