@@ -1,26 +1,35 @@
 // app/courses/page.tsx
 import React from "react";
 import ImageCarousel from "./ImageCarousel";
-import WeatherSection from "./WeatherSection";
+// import WeatherSection from "./weather-widget";
 import CoursesSection from "./CourseSection";
 
-const images = ["/clubhouse.jpg", "/upcoming.png", "/golf.jpg", "/ai.png"];
+const images = [
+  "/courses/course (1).jpg",
+  "/clubhouse.jpg",
+  "/courses/course (1).jpg",
+  "/courses/course (5).jpg",
+  "/courses/course (12).jpg",
+  "/courses/course (40).jpg",
+  "/courses/course (23).jpg",
+  "/courses/course (7).jpg",
+];
 
-async function getWeatherData() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/weather`, {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) {
-      throw new Error("Failed to fetch weather data");
-    }
-    console.log("Weather data fetched successfully");
-    return res.json();
-  } catch (error) {
-    console.error("Error fetching weather data:", error);
-    return null;
-  }
-}
+// async function getWeatherData() {
+//   try {
+//     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/weather`, {
+//       next: { revalidate: 3600 },
+//     });
+//     if (!res.ok) {
+//       throw new Error("Failed to fetch weather data");
+//     }
+//     console.log("Weather data fetched successfully");
+//     return res.json();
+//   } catch (error) {
+//     console.error("Error fetching weather data:", error);
+//     return null;
+//   }
+// }
 
 async function getCoursesData() {
   // This is a placeholder. In a real application, you would fetch this data from your API or database.
@@ -29,25 +38,25 @@ async function getCoursesData() {
       id: 1,
       name: "Pine Valley",
       description: "Challenging 18-hole course set in beautiful pine forests.",
-      imageUrl: "/golf.jpg",
+      imageUrl: "/courses/course (1).jpg",
     },
     {
       id: 2,
       name: "Ocean Links",
       description: "Scenic coastal course with breathtaking ocean views.",
-      imageUrl: "/golf.jpg",
+      imageUrl: "/courses/course (12).jpg",
     },
     {
       id: 3,
       name: "Mountain Peak",
       description: "High-altitude course offering unique golfing experience.",
-      imageUrl: "/golf.jpg",
+      imageUrl: "/courses/course (40).jpg",
     },
   ];
 }
 
 export default async function KoreaGolfCoursePage() {
-  const weatherData = await getWeatherData();
+  // const weatherData = await getWeatherData();
   const coursesData = await getCoursesData();
 
   return (
@@ -55,11 +64,11 @@ export default async function KoreaGolfCoursePage() {
       <ImageCarousel images={images} />
       <main className="flex-grow container mx-auto px-4 py-8">
         <CoursesSection courses={coursesData} />
-        {weatherData ? (
+        {/* {weatherData ? (
           <WeatherSection weatherData={weatherData} />
         ) : (
           <p>Weather data currently unavailable</p>
-        )}{" "}
+        )}{" "} */}
       </main>
     </div>
   );

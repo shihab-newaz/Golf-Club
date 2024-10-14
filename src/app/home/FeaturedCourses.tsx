@@ -8,10 +8,14 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 const featuredCourses = [
-  { name: "Pine Valley", image: "/golf.jpg", description: "Challenging 18-hole course set in beautiful pine forests." },
-  { name: "Ocean Links", image: "/golf.jpg", description: "Scenic coastal course with breathtaking ocean views." },
-  { name: "Mountain Peak", image: "/golf.jpg", description: "High-altitude course offering unique golfing experience." },
+  { name: "Pine Valley", image: "/courses/course (1).jpg", description: "Challenging 18-hole course set in beautiful pine forests." },
+  { name: "Ocean Links", image: "/courses/course (12).jpg", description: "Scenic coastal course with breathtaking ocean views." },
+  { name: "Mountain Peak", image: "/courses/course (40).jpg", description: "High-altitude course offering unique golfing experience." },
+  { name: "Bueng Ratchaburi", image: "/courses/course (23).jpg", description: "High-altitude course offering unique golfing experience." },
+  { name: "Bueng Aram", image: "/courses/course (35).jpg", description: "High-altitude course offering unique golfing experience." },
+  { name: "Bueng Kapit", image: "/courses/course (7).jpg", description: "High-altitude course offering unique golfing experience." },
 ];
+
 
 const FeaturedCourses = () => {
   return (

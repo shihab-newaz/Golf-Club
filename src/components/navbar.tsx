@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import WeatherWidget from "@/components/weather-widget";
 
 const Navbar: React.FC = () => {
   const { data: session } = useSession();
@@ -197,6 +198,7 @@ const Navbar: React.FC = () => {
           )}
 
           <div className="flex items-center">
+          <WeatherWidget />
             <ThemeToggle />
             {isMobile && <MobileMenu />}
           </div>
