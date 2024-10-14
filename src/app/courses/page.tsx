@@ -5,14 +5,14 @@ import ImageCarousel from "./ImageCarousel";
 import CoursesSection from "./CourseSection";
 
 const images = [
-  "/courses/course (1).jpg",
-  "/clubhouse.jpg",
-  "/courses/course (1).jpg",
-  "/courses/course (5).jpg",
-  "/courses/course (12).jpg",
-  "/courses/course (40).jpg",
-  "/courses/course (23).jpg",
-  "/courses/course (7).jpg",
+  "/courses/course (1).JPG",
+  "/clubhouse.JPG",
+  "/courses/course (1).JPG",
+  "/courses/course (5).JPG",
+  "/courses/course (12).JPG",
+  "/courses/course (40).JPG",
+  "/courses/course (23).JPG",
+  "/courses/course (7).JPG",
 ];
 
 // async function getWeatherData() {
@@ -38,19 +38,19 @@ async function getCoursesData() {
       id: 1,
       name: "Pine Valley",
       description: "Challenging 18-hole course set in beautiful pine forests.",
-      imageUrl: "/courses/course (1).jpg",
+      imageUrl: "/courses/course (1).JPG",
     },
     {
       id: 2,
       name: "Ocean Links",
       description: "Scenic coastal course with breathtaking ocean views.",
-      imageUrl: "/courses/course (12).jpg",
+      imageUrl: "/courses/course (12).JPG",
     },
     {
       id: 3,
       name: "Mountain Peak",
       description: "High-altitude course offering unique golfing experience.",
-      imageUrl: "/courses/course (40).jpg",
+      imageUrl: "/courses/course (40).JPG",
     },
   ];
 }

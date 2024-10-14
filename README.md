@@ -4,7 +4,7 @@ A minimalist and elegant website for a luxury golf club, built with modern web t
 
 ## 🌐 Live Demo
 
-Check out the live website: [kgc.vercel.app](https://kgc.vercel.app)
+Check out the live website: [daehocc.vercel.app](https://daehocc.vercel.app)
 
 ## 🚀 Features
 
