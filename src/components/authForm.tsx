@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 interface AuthFormProps {
   mode: "login" | "registration";
@@ -12,47 +13,69 @@ interface AuthFormProps {
 
 export default function AuthForm({ mode }: AuthFormProps) {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
 
     if (mode === "registration") {
       try {
         const res = await fetch("/api/auth/registration", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, password }),
+          body: JSON.stringify({ name, username, email, password, phoneNumber }),
         });
         if (res.ok) {
+          toast({
+            title: "Registration Successful",
+            description: "Please log in with your new account",
+            variant: "default",
+          });
           router.push("/login");
         } else {
           const data = await res.json();
-          setError(data.message || "Registration failed");
+          toast({
+            title: "Registration Failed",
+            description: data.message || "An error occurred during registration",
+            variant: "destructive",
+          });
         }
       } catch (err) {
         console.error("Registration error:", err);
-        setError("An error occurred during registration");
+        toast({
+          title: "Registration Error",
+          description: "An unexpected error occurred during registration",
+          variant: "destructive",
+        });
       }
     } else {
       try {
         const result = await signIn("credentials", {
           redirect: false,
-          email,
+          username,
           password,
         });
         if (result?.error) {
-          setError(result.error);
+          toast({
+            title: "Login Failed",
+            description: result.error === "CredentialsSignin" ? "Invalid username or password" : "An error occurred during login",
+            variant: "destructive",
+          });
         } else {
           router.push("/home");
         }
       } catch (err) {
         console.error("Login error:", err);
-        setError("An error occurred during login");
+        toast({
+          title: "Login Error",
+          description: "An unexpected error occurred during login",
+          variant: "destructive",
+        });
       }
     }
   };
@@ -62,7 +85,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
       {mode === "registration" && (
         <div>
           <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">
-            Name
+            Full Name
           </Label>
           <Input
             id="name"
@@ -75,18 +98,51 @@ export default function AuthForm({ mode }: AuthFormProps) {
         </div>
       )}
       <div>
-        <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
-          Email Address
+        <Label htmlFor="username" className="text-gray-700 dark:text-gray-300">
+          Username
         </Label>
         <Input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id="username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
           className="mt-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
         />
       </div>
+      {mode === "registration" && (
+        <>
+          <div>
+            <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
+              Email Address
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="mt-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+            />
+          </div>
+          <div>
+            <Label
+              htmlFor="phoneNumber"
+              className="text-gray-700 dark:text-gray-300"
+            >
+              Phone Number
+            </Label>
+            <Input
+              id="phoneNumber"
+              type="text"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+              className="mt-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+            />
+          </div>
+        </>
+      )}
       <div>
         <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">
           Password
@@ -100,7 +156,6 @@ export default function AuthForm({ mode }: AuthFormProps) {
           className="mt-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
         />
       </div>
-      {error && <p className="text-red-500">{error}</p>}
       <Button
         type="submit"
         className="w-full bg-emerald-600 hover:bg-emerald-700 text-white

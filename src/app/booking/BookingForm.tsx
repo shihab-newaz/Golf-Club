@@ -1,7 +1,7 @@
 // app/booking/BookingForm.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -22,11 +22,37 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
+interface TeeTime {
+  _id: string;
+  time: string;
+}
+
 export default function BookingForm() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [time, setTime] = useState<string>("");
   const [players, setPlayers] = useState<string>("");
+  const [availableTimes, setAvailableTimes] = useState<TeeTime[]>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (date) {
+      fetchAvailableTimes(date);
+    }
+  }, [date]);
+
+  const fetchAvailableTimes = async (selectedDate: Date) => {
+    const response = await fetch(`/api/available-tee-times?date=${selectedDate.toISOString()}`);
+    if (response.ok) {
+      const data = await response.json();
+      setAvailableTimes(data);
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to fetch available tee times",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,12 +72,28 @@ export default function BookingForm() {
       players: parseInt(players),
     };
 
-    console.log("Booking data ready for API submission:", bookingData);
-
-    toast({
-      title: "Booking Submitted",
-      description: "Your tee time request has been received.",
+    const response = await fetch('/api/book-tee-time', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(bookingData),
     });
+
+    if (response.ok) {
+      toast({
+        title: "Booking Submitted",
+        description: "Your tee time has been booked successfully.",
+      });
+      // Refetch available times to update the list
+      fetchAvailableTimes(date);
+    } else {
+      toast({
+        title: "Booking Error",
+        description: "Failed to book tee time. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -84,11 +126,11 @@ export default function BookingForm() {
                     <SelectValue placeholder="Select a time" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="08:00">08:00 AM</SelectItem>
-                    <SelectItem value="10:00">10:00 AM</SelectItem>
-                    <SelectItem value="12:00">12:00 PM</SelectItem>
-                    <SelectItem value="14:00">02:00 PM</SelectItem>
-                    <SelectItem value="16:00">04:00 PM</SelectItem>
+                    {availableTimes.map((teeTime) => (
+                      <SelectItem key={teeTime._id} value={teeTime.time}>
+                        {teeTime.time}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

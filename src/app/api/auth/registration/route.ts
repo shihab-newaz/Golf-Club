@@ -8,11 +8,16 @@ export async function POST(req: Request) {
   try {
     await dbConnect()
 
-    const { name, email, password, tier = 'free' } = await req.json()
+    const { name,username, email, password, phoneNumber, membershipTier = 'free' } = await req.json()
     
-    // Validate tier
-    if (!['free', 'basic', 'premium'].includes(tier)) {
-      return NextResponse.json({ message: 'Invalid tier' }, { status: 400 })
+    // Validate membershipTier
+    if (!['free','silver', 'gold', 'platinum'].includes(membershipTier)) {
+      return NextResponse.json({ message: 'Invalid membership tier' }, { status: 400 })
+    }
+
+    // Validate phoneNumber (you might want to add more sophisticated validation)
+    if (!phoneNumber || phoneNumber.length < 10) {
+      return NextResponse.json({ message: 'Invalid phone number' }, { status: 400 })
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -24,18 +29,23 @@ export async function POST(req: Request) {
 
     const user = await User.create({
       name,
+      username,
       email,
       password: hashedPassword,
-      tier
+      phoneNumber,
+      membershipTier,
+      role: 'member'  // Default role
     })
 
     return NextResponse.json({ 
       message: 'User registered successfully', 
       user: { 
         id: user._id, 
-        name: user.name, 
+        name: user.name,
+        username: user.username, 
         email: user.email,
-        tier: user.tier 
+        phoneNumber: user.phoneNumber,
+        membershipTier: user.membershipTier 
       } 
     }, { status: 201 })
   } catch (error) {

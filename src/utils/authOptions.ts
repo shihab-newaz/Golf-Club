@@ -9,47 +9,63 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.username || !credentials?.password) {
+          console.log("Missing credentials");
           return null;
         }
 
-        await dbConnect();
-        const user = await UserModel.findOne({ email: credentials.email });
+        try {
+          await dbConnect();
+          
+          const user = await UserModel.findOne({ username: credentials.username });
+          
+          if (!user) {
+            console.log("User not found");
+            return null;
+          }
 
-        if (!user) {
+          const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
+          
+          if (!isPasswordCorrect) {
+            console.log("Incorrect password");
+            return null;
+          }
+
+          console.log("Authentication successful");
+          return {
+            id: user._id.toString(),
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            membershipTier: user.membershipTier,
+            role: user.role,
+          };
+        } catch (error) {
+          console.error("Authentication error:", error);
           return null;
         }
-
-        const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
-
-        if (!isPasswordCorrect) {
-          return null;
-        }
-
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          tier: user.tier,
-        };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.tier = user.tier;
+        token.membershipTier = user.membershipTier;
+        token.role = user.role;
+        token.username = user.username;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.tier = token.tier as string;
+        session.user.membershipTier = token.membershipTier as string;
+        session.user.role = token.role as 'member' | 'admin';
         session.user.id = token.sub as string;
+        session.user.username = token.username as string;
       }
       return session;
     },
@@ -60,5 +76,5 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
-  secret: process.env.NEXTAUTH_SECRET, // Important for JWT and encryption
+  secret: process.env.NEXTAUTH_SECRET,
 };

@@ -1,25 +1,30 @@
 // app/models/User.ts
-import mongoose from 'mongoose'
+import mongoose, { Document, Schema } from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Please provide a name'],
-  },
-  email: {
-    type: String,
-    required: [true, 'Please provide an email'],
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: [true, 'Please provide a password'],
-  },
-  tier: {
-    type: String,
-    enum: ['free', 'basic', 'premium'],
-    default: 'free'
-  }
-}, { timestamps: true })
+export interface IUser extends Document {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  phoneNumber: string;  
+  role: 'member' | 'admin';
+  membershipTier: 'free'| 'silver' | 'gold' | 'platinum';
+  bookings: mongoose.Types.ObjectId[];  // One-to-Many: One user can have many bookings
+  events: mongoose.Types.ObjectId[];    // Many-to-Many: Users can register for many events
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-export default mongoose.models.User || mongoose.model('User', UserSchema)
+const UserSchema: Schema = new Schema({
+  name: { type: String, required: true },
+  username: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  phoneNumber: { type: String, required: true }, 
+  role: { type: String, enum: ['member', 'admin'], default: 'member' },
+  membershipTier: { type: String, enum: ['free','silver', 'gold', 'platinum'], default: 'free' },
+  bookings: [{ type: Schema.Types.ObjectId, ref: 'Booking' }],
+  events: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
+}, { timestamps: true });
+
+export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
