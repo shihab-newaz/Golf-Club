@@ -4,6 +4,7 @@ import HeroSection from "./HeroSection";
 import FeaturedCourses from "./FeaturedCourses";
 import MembershipSection from "./MembershipSection";
 import Testimonials from "./Testimonials";
+import LocationSection from "./LocationSection";
 
 export default function HomePage() {
   return (
@@ -12,7 +13,7 @@ export default function HomePage() {
         <HeroSection />
         <FeaturedCourses />
         <MembershipSection />
-        {/* <WeatherSection /> */}
+        <LocationSection />
         <Testimonials />
       </main>
     </div>

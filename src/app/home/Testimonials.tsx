@@ -6,17 +6,17 @@ import { motion } from 'framer-motion';
 
 const testimonials = [
   {
-    name: "John Doe",
-    testimonial: "This golf club has truly elevated my game. The courses are challenging yet rewarding.",
+    name: "Eric Crutchfield",
+    testimonial: "Course is improving, 2nd nine has better grassed fairways. Greens are pretty good. They are building a restaurant area, that will be great on hotter days. Worth a visit. 420 green fees, cart 400 :)",
     membership: "Gold Member"
   },
   {
-    name: "Jane Smith",
+    name: "Swan Pyae",
     testimonial: "I've been a member for 5 years and the experience keeps getting better. The staff is exceptional!",
     membership: "Platinum Member"
   },
   {
-    name: "Mike Johnson",
+    name: "Tae-in Ahn",
     testimonial: "The amenities and course maintenance are top-notch. It's a golfer's paradise!",
     membership: "Silver Member"
   }
