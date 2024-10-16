@@ -1,16 +1,16 @@
 // app/events/page.tsx
-import { Suspense } from 'react';
-import EventsList from './EventsList';
-import EventsHero from './EventsHero';
-import dbConnect from '@/lib/mongoose';
-import Event, { IEvent } from '@/models/Event';
-import { Types } from 'mongoose';
+import { Suspense } from "react";
+import EventsList from "./EventsList";
+import EventsHero from "./EventsHero";
+import dbConnect from "@/lib/mongoose";
+import Event from "@/models/Event";
+import { Types } from "mongoose";
 
 interface LeanEvent {
   _id: Types.ObjectId;
   title: string;
   date: string;
-  image: string;
+  image?: string;
 }
 
 async function getEvents() {
@@ -18,11 +18,27 @@ async function getEvents() {
   const events = await Event.find({}).lean().exec();
   return events.map((event) => {
     const typedEvent = event as LeanEvent;
+    const eventDate = new Date(typedEvent.date);
+
+    // Format date
+    const formattedDate = eventDate.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    // Extract time
+    const formattedTime = eventDate.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
     return {
       id: typedEvent._id.toString(),
       title: typedEvent.title,
-      date: typedEvent.date,
-      image: typedEvent.image,
+      date: formattedDate,
+      time: formattedTime,
+      image: typedEvent.image || "/clubhouse.jpg",
     };
   });
 }
@@ -43,4 +59,3 @@ export default async function EventsPage() {
     </div>
   );
 }
-
