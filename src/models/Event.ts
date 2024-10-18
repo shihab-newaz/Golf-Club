@@ -8,8 +8,9 @@ export interface IEvent extends Document {
   startTime: string;
   endTime: string;
   capacity: number;
-  registeredUsers: mongoose.Types.ObjectId[];  // Many-to-Many: Many users can register for many events
-  createdBy: mongoose.Types.ObjectId;  // One-to-Many: One admin can create many events
+  registeredUsers: mongoose.Types.ObjectId[];
+  createdBy: mongoose.Types.ObjectId;
+  imageUrl: string;  // New field
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,6 +24,7 @@ const EventSchema: Schema = new Schema({
   capacity: { type: Number, required: true },
   registeredUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  imageUrl: { type: String, required: true },  // New field
 }, { timestamps: true });
 
 export default mongoose.models.Event || mongoose.model<IEvent>('Event', EventSchema);

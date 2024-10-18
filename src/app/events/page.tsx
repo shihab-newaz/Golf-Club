@@ -9,13 +9,15 @@ import { Types } from "mongoose";
 interface LeanEvent {
   _id: Types.ObjectId;
   title: string;
-  date: string;
-  image?: string;
+  date: Date;
+  startTime: string;
+  endTime: string;
+  imageUrl: string;
 }
 
 async function getEvents() {
   await dbConnect();
-  const events = await Event.find({}).lean().exec();
+  const events = await Event.find({}).lean().exec();// Fetch all events
   return events.map((event) => {
     const typedEvent = event as LeanEvent;
     const eventDate = new Date(typedEvent.date);
@@ -27,18 +29,12 @@ async function getEvents() {
       day: "numeric",
     });
 
-    // Extract time
-    const formattedTime = eventDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
     return {
       id: typedEvent._id.toString(),
       title: typedEvent.title,
       date: formattedDate,
-      time: formattedTime,
-      image: typedEvent.image || "/clubhouse.jpg",
+      time: `${typedEvent.startTime} - ${typedEvent.endTime}`,
+      image: typedEvent.imageUrl,
     };
   });
 }

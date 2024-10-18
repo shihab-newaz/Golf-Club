@@ -16,7 +16,7 @@ const navLinks = [
 ];
 
 const serviceLinks = [
-  { href: "/services/tee-time-booking", title: "Tee Time Booking" },
+  { href: "/booking", title: "Tee Time Booking" },
   { href: "/services/accommodation", title: "Accommodation" },
   { href: "/services/meals", title: "Meals" },
   { href: "/services/airport-pickup", title: "Airport Pickup" },

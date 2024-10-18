@@ -1,74 +1,56 @@
 // app/courses/page.tsx
-import React from "react";
+import React, { Suspense } from "react";
 import ImageCarousel from "./ImageCarousel";
-// import WeatherSection from "./weather-widget";
 import CoursesSection from "./CourseSection";
+import dbConnect from "@/lib/mongoose";
+import Course from "@/models/Course";
+import { Types } from "mongoose";
 
-const images = [
-  "/courses/course (1).JPG",
-  "/clubhouse.JPG",
-  "/courses/course (1).JPG",
-  "/courses/course (5).JPG",
-  "/courses/course (12).JPG",
-  "/courses/course (40).JPG",
-  "/courses/course (23).JPG",
-  "/courses/course (7).JPG",
-];
-
-// async function getWeatherData() {
-//   try {
-//     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/weather`, {
-//       next: { revalidate: 3600 },
-//     });
-//     if (!res.ok) {
-//       throw new Error("Failed to fetch weather data");
-//     }
-//     console.log("Weather data fetched successfully");
-//     return res.json();
-//   } catch (error) {
-//     console.error("Error fetching weather data:", error);
-//     return null;
-//   }
-// }
+interface LeanCourse {
+  _id: Types.ObjectId;
+  name: string;
+  description: string;
+  holes: number;
+  par: number;
+  length: number;
+  difficulty: 'easy' | 'medium' | 'hard';
+  imageUrl: string;
+  isOpen: boolean;
+}
 
 async function getCoursesData() {
-  // This is a placeholder. In a real application, you would fetch this data from your API or database.
-  return [
-    {
-      id: 1,
-      name: "Pine Valley",
-      description: "Challenging 18-hole course set in beautiful pine forests.",
-      imageUrl: "/courses/course (1).JPG",
-    },
-    {
-      id: 2,
-      name: "Ocean Links",
-      description: "Scenic coastal course with breathtaking ocean views.",
-      imageUrl: "/courses/course (12).JPG",
-    },
-    {
-      id: 3,
-      name: "Mountain Peak",
-      description: "High-altitude course offering unique golfing experience.",
-      imageUrl: "/courses/course (40).JPG",
-    },
-  ];
+  await dbConnect();
+  const courses = await Course.find({}).lean().exec();
+  return courses.map((course) => {
+    const typedCourse = course as LeanCourse;
+
+    return {
+      id: typedCourse._id.toString(),
+      name: typedCourse.name,
+      description: typedCourse.description,
+      holes: typedCourse.holes,
+      par: typedCourse.par,
+      length: typedCourse.length,
+      difficulty: typedCourse.difficulty,
+      imageUrl: typedCourse.imageUrl,
+      isOpen: typedCourse.isOpen,
+    };
+  });
 }
 
 export default async function KoreaGolfCoursePage() {
-  // const weatherData = await getWeatherData();
   const coursesData = await getCoursesData();
+  
+  // Extract image URLs from course data
+  const images = coursesData.map(course => course.imageUrl);
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-green-50 to-blue-50 dark:from-black/90 dark:to-gray-900">
       <ImageCarousel images={images} />
       <main className="flex-grow container mx-auto px-4 py-8">
-        <CoursesSection courses={coursesData} />
-        {/* {weatherData ? (
-          <WeatherSection weatherData={weatherData} />
-        ) : (
-          <p>Weather data currently unavailable</p>
-        )}{" "} */}
+        <Suspense fallback={<div>Loading courses...</div>}>
+          <CoursesSection courses={coursesData} />
+        </Suspense>
       </main>
     </div>
   );
