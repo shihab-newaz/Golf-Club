@@ -1,3 +1,4 @@
+// src/components/navbar/DesktopNav.tsx
 import Link from "next/link";
 import { LogIn, User } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -51,30 +52,35 @@ const DesktopNav: React.FC<{ session: any }> = ({ session }) => (
 
 
 
-const UserMenu: React.FC<{ session: any }> = ({ session }) => (
-  <NavigationMenuItem>
-    <NavigationMenuTrigger className="px-4 py-2 text-sm font-medium bg-transparent hover:bg-transparent text-foreground hover:text-link">
-      <User className="mr-2 h-5 w-5" />
-      <span>{session.user?.name}</span>
-    </NavigationMenuTrigger>
-    <NavigationMenuContent>
-      <ul className="grid gap-3 p-4 lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-        <UserProfileLink session={session} />
-        <MenuLink
-          href="/dashboard"
-          title="Dashboard"
-          description="View your stats and activity"
-        />
-        <MenuLink
-          href="/settings"
-          title="Settings"
-          description="Manage your preferences"
-        />
-        <SignOutButton />
-      </ul>
-    </NavigationMenuContent>
-  </NavigationMenuItem>
-);
+const UserMenu: React.FC<{ session: any }> = ({ session }) => {
+  const isAdmin = session?.user?.role === 'admin';
+  const dashboardLink = isAdmin ? "/admin" : "/dashboard";
+
+  return (
+    <NavigationMenuItem>
+      <NavigationMenuTrigger className="px-4 py-2 text-sm font-medium bg-transparent hover:bg-transparent text-foreground hover:text-link">
+        <User className="mr-2 h-5 w-5" />
+        <span>{session.user?.name}</span>
+      </NavigationMenuTrigger>
+      <NavigationMenuContent>
+        <ul className="grid gap-3 p-4 lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+          <UserProfileLink session={session} />
+          <MenuLink
+            href={dashboardLink}
+            title={isAdmin ? "Admin Dashboard" : "Dashboard"}
+            description={isAdmin ? "Manage club settings and users" : "View your stats and activity"}
+          />
+          <MenuLink
+            href="/settings"
+            title="Settings"
+            description="Manage your preferences"
+          />
+          <SignOutButton />
+        </ul>
+      </NavigationMenuContent>
+    </NavigationMenuItem>
+  );
+};
 
 const UserProfileLink: React.FC<{ session: any }> = ({ session }) => (
   <li className="row-span-3">

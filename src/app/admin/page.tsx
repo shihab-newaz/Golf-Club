@@ -1,187 +1,170 @@
-"use client";
-
-import { useState } from "react";
-import { Calendar, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// app/admin/page.tsx
+import React from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import Link from "next/link";
+import { Users, Calendar, Clock, LandPlot } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import dbConnect from "@/lib/mongoose";
+import User from "@/models/User";
+import Event from "@/models/Event";
+import Booking from "@/models/Booking";
+import TeeTime from "@/models/TeeTime";
+import Course from "@/models/Course";
 
-export default function AdminDashboard() {
-  const [resortInfo, setResortInfo] = useState({
-    name: "Daeho Country Club",
-    description:
-      "Luxury golf resort with stunning views and world-class facilities.",
-    address: "123 Golf Course Rd, Jeju Island, South Korea",
-  });
+async function getDashboardData() {
+  await dbConnect();
 
-  const updateResortInfo = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // In a real application, you would send this data to your backend
-    alert("Resort information updated!");
+  const userCount = await User.countDocuments();
+  const eventCount = await Event.countDocuments();
+  const bookingCount = await Booking.countDocuments();
+  const teeTimeCount = await TeeTime.countDocuments();
+  const courseCount = await Course.countDocuments();
+
+  const recentBookings = await Booking.find()
+    .sort({ createdAt: -1 })
+    .limit(3)
+    .populate("user", "name")
+    .populate("teeTime", "date time");
+
+  return {
+    userCount,
+    eventCount,
+    bookingCount,
+    teeTimeCount,
+    courseCount,
+    recentBookings,
   };
-
-  return (
-    <div className="flex h-screen bg-gradient-to-r from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Dashboard Content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gradient-to-r from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-          <div className="container mx-auto px-6 py-8 mt-12">
-            {/* ... Other content ... */}
-            <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total Revenue
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">₩52,345,678</div>
-                  <p className="text-xs text-muted-foreground">
-                    +15.2% from last month
-                  </p>
-                </CardContent>
-              </Card>
-              {/* ... Other cards ... */}
-            </div>
-
-            <div className="grid gap-6 mb-8 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Bookings</CardTitle>
-                  <CardDescription>
-                    You have 5 new bookings today.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-4">
-                    <li className="flex items-center">
-                      <span className="w-32 text-gray-600 dark:text-gray-400">
-                        Kim Min-jun
-                      </span>
-                      <span className="flex-1">18-hole round, 2:00 PM</span>
-                      <Badge>New</Badge>
-                    </li>
-                    {/* ... Other bookings ... */}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Upcoming Events</CardTitle>
-                  <CardDescription>
-                    You have 3 events this month.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-4">
-                    <li className="flex items-center">
-                      <span className="w-32 text-gray-600 dark:text-gray-400">
-                        Jul 20, 2024
-                      </span>
-                      <span className="flex-1">Summer Golf Championship</span>
-                    </li>
-                    {/* ... Other events ... */}
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="flex space-x-4 mb-8">
-              <Button>
-                <Calendar className="mr-2 h-4 w-4" /> Add New Event
-              </Button>
-              <Link href="/admin/bookings">
-                <Button variant="outline">
-                  <Users className="mr-2 h-4 w-4" /> Manage Bookings
-                </Button>
-              </Link>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Update Resort Information</CardTitle>
-                <CardDescription>
-                  Make changes to your resort's details here.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={updateResortInfo}>
-                  <div className="grid w-full items-center gap-4">
-                    <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="name">Name</Label>
-                      <Input
-                        id="name"
-                        value={resortInfo.name}
-                        onChange={(e) =>
-                          setResortInfo({ ...resortInfo, name: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="description">Description</Label>
-                      <Textarea
-                        id="description"
-                        value={resortInfo.description}
-                        onChange={(e) =>
-                          setResortInfo({
-                            ...resortInfo,
-                            description: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="address">Address</Label>
-                      <Input
-                        id="address"
-                        value={resortInfo.address}
-                        onChange={(e) =>
-                          setResortInfo({
-                            ...resortInfo,
-                            address: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <Button type="submit">Update Resort Information</Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
-      </div>
-    </div>
-  );
 }
 
-function Badge({ children }: { children: React.ReactNode }) {
+export default async function AdminDashboard() {
+  const {
+    userCount,
+    eventCount,
+    bookingCount,
+    teeTimeCount,
+    courseCount,
+    recentBookings,
+  } = await getDashboardData();
+
   return (
-    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-800 dark:text-green-100">
-      {children}
-    </span>
+    <>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        {/* Total Members */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Members
+            </CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{userCount}</div>
+          </CardContent>
+        </Card>
+        {/* Total Events */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Events
+            </CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{eventCount}</div>
+          </CardContent>
+        </Card>
+        {/* Total Bookings */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Bookings
+            </CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{bookingCount}</div>
+          </CardContent>
+        </Card>
+        {/* Total Tee Times */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Tee Times
+            </CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{teeTimeCount}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Courses
+            </CardTitle>
+            <LandPlot className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{courseCount}</div>
+          </CardContent>
+        </Card>
+      </div>
+      {/* Recent Bookings */}
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle>Recent Bookings</CardTitle>
+          <CardDescription>
+            You have {bookingCount} total bookings.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-8">
+            {recentBookings.map((booking) => (
+              <div className="flex items-center" key={booking._id}>
+                <Avatar className="h-9 w-9">
+                  <AvatarImage
+                    src={`/placeholder.svg?height=36&width=36`}
+                    alt={booking.user?.name || "User"}
+                  />
+                  <AvatarFallback>
+                    {booking.user?.name
+                      ? booking.user.name
+                          .split(" ")
+                          .map((n: string) => n[0])
+                          .join("")
+                      : "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="ml-4 space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    {booking.user?.name || "Unknown User"}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {booking.players || "N/A"} players
+                  </p>
+                </div>
+                <div className="ml-auto font-medium">
+                  {booking.teeTime ? (
+                    <>
+                      <p>
+                        {new Date(booking.teeTime.date).toLocaleDateString()}
+                      </p>
+                      <p>{booking.teeTime.time}</p>
+                    </>
+                  ) : (
+                    "Tee time not available"
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }
