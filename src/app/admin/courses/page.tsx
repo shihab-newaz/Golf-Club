@@ -1,6 +1,6 @@
 // app/admin/courses/page.tsx
 import { Suspense } from 'react';
-import AdminCoursesPageClient from './CoursesClient';
+import CoursesClient from './CoursesClient';
 import { getCourses } from './actions';
 
 export default async function AdminCoursesPage() {
@@ -8,7 +8,7 @@ export default async function AdminCoursesPage() {
 
   return (
     <Suspense fallback={<div>Loading courses...</div>}>
-      <AdminCoursesPageClient initialCourses={initialCourses} />
+      <CoursesClient initialCourses={initialCourses} />
     </Suspense>
   );
 }

@@ -1,114 +1,77 @@
 // app/admin/courses/AdminCoursesPageClient.tsx
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
+import { CourseForm } from "./form";
 import { deleteCourse, addCourse, updateCourse } from "./actions";
 
 interface Course {
   _id: string;
   name: string;
+  description?: string;
   holes: number;
   par: number;
-  length: number;
+  length?: number;
+  difficulty: "easy" | "medium" | "hard";
+  imageUrl?: string;
+  isOpen: boolean;
 }
 
 interface AdminCoursesPageProps {
   initialCourses: Course[];
 }
 
-export default function AdminCoursesPageClient({ initialCourses }: AdminCoursesPageProps) {
+export default function CoursesClient({
+  initialCourses,
+}: AdminCoursesPageProps) {
   const [courses, setCourses] = useState<Course[]>(initialCourses);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isAddCourseOpen, setIsAddCourseOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
-  const router = useRouter();
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this course?')) {
-      setIsLoading(true);
-      try {
-        await deleteCourse(id);
-        setCourses(courses.filter(course => course._id !== id));
-      } catch (err) {
-        console.error(err);
-        setError('Failed to delete course');
-      } finally {
-        setIsLoading(false);
+  const handleSubmit = async (courseData: Partial<Course>) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      if (editingCourse) {
+        const updatedCourse = await updateCourse(editingCourse._id, courseData);
+        setCourses(
+          courses.map((course) =>
+            course._id === updatedCourse._id ? updatedCourse : course
+          )
+        );
+      } else {
+        const newCourse = await addCourse(courseData);
+        setCourses([...courses, newCourse]);
       }
-    }
-  };
-
-  const handleAddCourse = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    const formData = new FormData(event.currentTarget);
-    const courseData = {
-      name: formData.get('name') as string,
-      holes: Number(formData.get('holes')),
-      par: Number(formData.get('par')),
-      length: Number(formData.get('length')),
-    };
-
-    try {
-      const newCourse = await addCourse(courseData);
-      setCourses([...courses, newCourse]);
-      setIsAddCourseOpen(false);
-    } catch (err) {
-      console.error(err);
-      setError('Failed to add course');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleUpdateCourse = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!editingCourse) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    const formData = new FormData(event.currentTarget);
-    const courseData = {
-      name: formData.get('name') as string,
-      holes: Number(formData.get('holes')),
-      par: Number(formData.get('par')),
-      length: Number(formData.get('length')),
-    };
-
-    try {
-      const updatedCourse = await updateCourse(editingCourse._id, courseData);
-      setCourses(courses.map(course => 
-        course._id === updatedCourse._id ? updatedCourse : course
-      ));
+      setIsFormOpen(false);
       setEditingCourse(null);
     } catch (err) {
       console.error(err);
-      setError('Failed to update course');
+      setError(
+        editingCourse ? "Failed to update course" : "Failed to add course"
+      );
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this course?")) {
+      setIsLoading(true);
+      try {
+        await deleteCourse(id);
+        setCourses(courses.filter((course) => course._id !== id));
+      } catch (err) {
+        console.error(err);
+        setError("Failed to delete course");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -116,72 +79,32 @@ export default function AdminCoursesPageClient({ initialCourses }: AdminCoursesP
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="container mx-auto p-4 ">
+    <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Manage Courses</h1>
-      <Dialog open={isAddCourseOpen} onOpenChange={setIsAddCourseOpen}>
-        <DialogTrigger asChild>
-          <Button className="mb-4">Add New Course</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Course</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleAddCourse} className="space-y-4">
-            <div>
-              <Label htmlFor="name">Course Name</Label>
-              <Input id="name" name="name" placeholder="Course Name" required />
-            </div>
-            <div>
-              <Label htmlFor="holes">Number of Holes</Label>
-              <Input id="holes" name="holes" type="number" min="9" max="18" required />
-            </div>
-            <div>
-              <Label htmlFor="par">Par</Label>
-              <Input id="par" name="par" type="number" required />
-            </div>
-            <div>
-              <Label htmlFor="length">Length (yards)</Label>
-              <Input id="length" name="length" type="number" required />
-            </div>
-            <Button type="submit">Add Course</Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={!!editingCourse} onOpenChange={(open) => !open && setEditingCourse(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Course</DialogTitle>
-          </DialogHeader>
-          {editingCourse && (
-            <form onSubmit={handleUpdateCourse} className="space-y-4">
-              <div>
-                <Label htmlFor="edit-name">Course Name</Label>
-                <Input id="edit-name" name="name" defaultValue={editingCourse.name} required />
-              </div>
-              <div>
-                <Label htmlFor="edit-holes">Number of Holes</Label>
-                <Input id="edit-holes" name="holes" type="number" min="9" max="18" defaultValue={editingCourse.holes} required />
-              </div>
-              <div>
-                <Label htmlFor="edit-par">Par</Label>
-                <Input id="edit-par" name="par" type="number" defaultValue={editingCourse.par} required />
-              </div>
-              <div>
-                <Label htmlFor="edit-length">Length (yards)</Label>
-                <Input id="edit-length" name="length" type="number" defaultValue={editingCourse.length} required />
-              </div>
-              <Button type="submit">Update Course</Button>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
+      <Button className="mb-4" onClick={() => setIsFormOpen(true)}>
+        Add New Course
+      </Button>
+
+      <CourseForm
+        course={editingCourse ?? undefined}
+        onSubmit={handleSubmit}
+        isOpen={isFormOpen || !!editingCourse}
+        onOpenChange={(open) => {
+          setIsFormOpen(open);
+          if (!open) setEditingCourse(null);
+        }}
+      />
+
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
+            <TableHead>Description</TableHead>
             <TableHead>Holes</TableHead>
             <TableHead>Par</TableHead>
             <TableHead>Length (yards)</TableHead>
+            <TableHead>Difficulty</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -189,14 +112,27 @@ export default function AdminCoursesPageClient({ initialCourses }: AdminCoursesP
           {courses.map((course) => (
             <TableRow key={course._id}>
               <TableCell>{course.name}</TableCell>
+              <TableCell>{course.description || "N/A"}</TableCell>
               <TableCell>{course.holes}</TableCell>
               <TableCell>{course.par}</TableCell>
-              <TableCell>{course.length}</TableCell>
+              <TableCell>{course.length || "N/A"}</TableCell>
+              <TableCell>{course.difficulty}</TableCell>
+              <TableCell>{course.isOpen ? "Open" : "Closed"}</TableCell>
               <TableCell>
-                <Button variant="outline" className="mr-2" onClick={() => setEditingCourse(course)}>
+                <Button
+                  variant="outline"
+                  className="mr-2"
+                  onClick={() => {
+                    setEditingCourse(course);
+                    setIsFormOpen(true);
+                  }}
+                >
                   Edit
                 </Button>
-                <Button variant="destructive" onClick={() => handleDelete(course._id)}>
+                <Button
+                  variant="destructive"
+                  onClick={() => handleDelete(course._id)}
+                >
                   Delete
                 </Button>
               </TableCell>

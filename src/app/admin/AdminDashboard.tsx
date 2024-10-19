@@ -17,7 +17,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 const sidebarItems = [
   { name: "Dashboard", icon: Home, href: "/admin" },
@@ -72,14 +71,14 @@ export default function AdminDashboard({
     <div className="flex min-h-screen bg-background text-foreground">
       {/* Desktop Sidebar */}
       <aside className="hidden md:block fixed left-0 top-0 z-40 h-1/2 w-64 bg-background mt-16">
-        <Sidebar />
+        <Sidebar className="text-foreground-alt"/>
       </aside>
 
       {/* Main content */}
       <div className="flex flex-col flex-1 md:ml-64">
         {/* Top bar */}
         <header className="fixed top-16 right-0 left-0 md:left-64 z-30 flex items-center justify-between px-4 py-4 bg-background/50 backdrop-blur-md shadow-md lg:px-6">
-          <h1 className="text-2xl font-semibold">{getPageTitle()}</h1>
+          <h1 className="text-2xl font-semibold text-foreground-alt">{getPageTitle()}</h1>
           <div className="flex items-center gap-4">
            
             {/* Mobile Sidebar */}

@@ -6,7 +6,7 @@
   :root {
     --background: 0 0% 96.1%; /* White Smoke (#F5F5F5) */
     --background-alt: 54.7 66.7% 80%; /*PaleGoldenRod (#EEE8AA)*/
-    --foreground-alt: 204 20% 26.1%; /* Charcoal (#36454F) */
+    --foreground-alt: 179 100% 0%;  
     --foreground: 0 0% 100%; /* White (#FFFFFF) */
 
     --link: 50.1 48.4% 55.9%;
@@ -40,9 +40,10 @@
   }
 
   .dark {
-    --background: 222 71% 10.04%;
+    --background: 200 0% 15.0%;
     --background-alt: 222.2 84% 4.9%;
     --foreground: 210 20% 98%;
+    --foreground-alt: 200 0 100%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 20% 98%;
     --popover: 222.2 84% 4.9%;
