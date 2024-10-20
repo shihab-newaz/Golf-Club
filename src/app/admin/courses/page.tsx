@@ -1,6 +1,6 @@
 // app/admin/courses/page.tsx
 import { Suspense } from 'react';
-import CoursesClient from './CoursesClient';
+import CoursesClient from './client';
 import { getCourses } from './actions';
 
 export default async function AdminCoursesPage() {

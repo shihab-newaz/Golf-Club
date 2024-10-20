@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
 import { CourseForm } from "./form";
 import { deleteCourse, addCourse, updateCourse } from "./actions";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Course {
   _id: string;
@@ -81,7 +82,7 @@ export default function CoursesClient({
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Manage Courses</h1>
-      <Button className="mb-4" onClick={() => setIsFormOpen(true)}>
+      <Button className="mb-4 text-white" onClick={() => setIsFormOpen(true)}>
         Add New Course
       </Button>
 
@@ -95,33 +96,66 @@ export default function CoursesClient({
         }}
       />
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Holes</TableHead>
-            <TableHead>Par</TableHead>
-            <TableHead>Length (yards)</TableHead>
-            <TableHead>Difficulty</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {courses.map((course) => (
-            <TableRow key={course._id}>
-              <TableCell>{course.name}</TableCell>
-              <TableCell>{course.description || "N/A"}</TableCell>
-              <TableCell>{course.holes}</TableCell>
-              <TableCell>{course.par}</TableCell>
-              <TableCell>{course.length || "N/A"}</TableCell>
-              <TableCell>{course.difficulty}</TableCell>
-              <TableCell>{course.isOpen ? "Open" : "Closed"}</TableCell>
-              <TableCell>
+           {/* Desktop view */}
+           <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Holes</TableHead>
+              <TableHead>Par</TableHead>
+              <TableHead>Difficulty</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {courses.map((course) => (
+              <TableRow key={course._id}>
+                <TableCell>{course.name}</TableCell>
+                <TableCell>{course.holes}</TableCell>
+                <TableCell>{course.par}</TableCell>
+                <TableCell>{course.difficulty}</TableCell>
+                <TableCell>{course.isOpen ? "Open" : "Closed"}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    className="mr-2"
+                    onClick={() => {
+                      setEditingCourse(course);
+                      setIsFormOpen(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleDelete(course._id)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Mobile view */}
+      <div className="md:hidden space-y-4">
+        {courses.map((course) => (
+          <Card key={course._id}>
+            <CardHeader>
+              <CardTitle>{course.name}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Holes: {course.holes}</p>
+              <p>Par: {course.par}</p>
+              <p>Difficulty: {course.difficulty}</p>
+              <p>Status: {course.isOpen ? "Open" : "Closed"}</p>
+              <div className="mt-4 space-x-2">
                 <Button
                   variant="outline"
-                  className="mr-2"
                   onClick={() => {
                     setEditingCourse(course);
                     setIsFormOpen(true);
@@ -135,11 +169,11 @@ export default function CoursesClient({
                 >
                   Delete
                 </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

@@ -37,7 +37,7 @@ const MembershipSection: React.FC = () => {
   return (
     <motion.section
       ref={sectionRef}
-      className={`py-24 px-6 bg-gradient-to-r from-[#fae8b4]/90 to-[#e0cd95]/90 
+      className={` pt-24 px-6 h-[40vh] bg-gradient-to-r from-[#fae8b4]/90 to-[#e0cd95]/90 
                   dark:from-black/90 dark:via-gray-900/90 dark:to-black/90 
                   text-foreground-alt transition-all duration-300`}
       style={{

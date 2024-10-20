@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import WeatherWidget from "@/components/navbar/weather-widget";
+import WeatherWidget from "@/components/navbar/WeatherWidget";
 import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
 import Link from "next/link";

@@ -4,68 +4,78 @@
 
 @layer base {
   :root {
-    --background: 0 0% 96.1%; /* White Smoke (#F5F5F5) */
-    --background-alt: 54.7 66.7% 80%; /*PaleGoldenRod (#EEE8AA)*/
-    --foreground-alt: 179 100% 0%;  
-    --foreground: 0 0% 100%; /* White (#FFFFFF) */
+    --background: 0 0% 100%; /* White */
+    --background-alt: 210 20% 98%; /* Very Light Gray */
+    --foreground: 222.2 84% 4.9%; /* Very Dark Blue */
+    --foreground-alt: 215.4 16.3% 46.9%; /* Gray */
 
-    --link: 50.1 48.4% 55.9%;
+    --link: 221.2 83.2% 53.3%; /* Blue */
 
-    --card: 0 0% 100%;
-    --card-foreground: 204 20% 26.1%;
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 222.2 84% 4.9%; /* Very Dark Blue */
+    --card-alt: 210 20% 98%; /* Very Light Gray */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 204 20% 26.1%;
+    --popover: 0 0% 100%; /* White */
+    --popover-foreground: 222.2 84% 4.9%; /* Very Dark Blue */
 
-    --primary: 93 40% 42%; /* Palm Leaf Green (#6F9940) */
-    --primary-foreground: 0 0% 100%;
+    --primary: 221.2 83.2% 53.3%; /* Blue */
+    --primary-foreground: 210 40% 98%; /* Very Light Blue */
 
-    --secondary: 36 40% 56%; /* Vegas Gold (#C5B358) */
-    --secondary-foreground: 204 20% 26.1%;
+    --secondary: 210 40% 96.1%; /* Light Gray */
+    --secondary-foreground: 222.2 47.4% 11.2%; /* Dark Gray */
 
-    --muted: 24 41% 80%; /* Desert Sand (#EDC9AF) */
-    --muted-foreground: 204 20% 26.1%;
+    --muted: 210 40% 96.1%; /* Light Gray */
+    --muted-foreground: 215.4 16.3% 46.9%; /* Gray */
 
-    --accent: 36 40% 56%; /* Vegas Gold (#C5B358) */
-    --accent-foreground: 204 20% 26.1%;
+    --accent: 210 40% 96.1%; /* Light Gray */
+    --accent-foreground: 222.2 47.4% 11.2%; /* Dark Gray */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive: 0 84.2% 60.2%; /* Red */
+    --destructive-foreground: 210 40% 98%; /* Very Light Red */
 
-    --border: 24 41% 80%; /* Desert Sand (#EDC9AF) */
-    --input: 24 41% 80%; /* Desert Sand (#EDC9AF) */
-    --ring: 93 40% 42%; /* Palm Leaf Green (#6F9940) */
+    --border: 214.3 31.8% 91.4%; /* Light Gray */
+    --input: 214.3 31.8% 91.4%; /* Light Gray */
+    --ring: 221.2 83.2% 53.3%; /* Blue */
 
+    --button: 221.2 83.2% 53.3%; /* Blue */
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 200 0% 15.0%;
-    --background-alt: 222.2 84% 4.9%;
-    --foreground: 210 20% 98%;
-    --foreground-alt: 200 0 100%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 20% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 142.1 70.6% 45.3%;
-    --primary-foreground: 144.9 80.4% 10%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 142.4 71.8% 29.2%;
+    --background: 222.2 84% 4.9%; /* Very Dark Blue */
+    --background-alt: 217.2 32.6% 17.5%; /* Dark Blue Gray */
+    --foreground: 210 40% 98%; /* Very Light Gray */
+    --foreground-alt: 215 20.2% 65.1%; /* Light Gray */
+
+    --card: 222.2 84% 4.9%; /* Very Dark Blue */
+    --card-foreground: 210 40% 98%; /* Very Light Gray */
+    --card-alt: 217.2 32.6% 17.5%; /* Dark Blue Gray */
+
+    --popover: 222.2 84% 4.9%; /* Very Dark Blue */
+    --popover-foreground: 210 40% 98%; /* Very Light Gray */
+
+    --primary: 217.2 91.2% 59.8%; /* Bright Blue */
+    --primary-foreground: 222.2 47.4% 11.2%; /* Dark Gray */
+
+    --secondary: 217.2 32.6% 17.5%; /* Dark Blue Gray */
+    --secondary-foreground: 210 40% 98%; /* Very Light Gray */
+
+    --muted: 217.2 32.6% 17.5%; /* Dark Blue Gray */
+    --muted-foreground: 215 20.2% 65.1%; /* Light Gray */
+
+    --accent: 217.2 32.6% 17.5%; /* Dark Blue Gray */
+    --accent-foreground: 210 40% 98%; /* Very Light Gray */
+
+    --destructive: 0 62.8% 30.6%; /* Dark Red */
+    --destructive-foreground: 210 40% 98%; /* Very Light Gray */
+
+    --border: 217.2 32.6% 17.5%; /* Dark Blue Gray */
+    --input: 217.2 32.6% 17.5%; /* Dark Blue Gray */
+    --ring: 224.3 76.3% 48%; /* Blue */
+
+    --button: 224.3 76.3% 48%; /* Blue */
   }
 }
-
-
-
 @layer utilities {
   .youtube-container {
     position: relative;

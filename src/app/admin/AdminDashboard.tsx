@@ -12,7 +12,7 @@ import {
   Users,
   Calendar,
   Clock,
-  LandPlot,
+  LandPlot,Hotel
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ const sidebarItems = [
   { name: "Events", icon: Calendar, href: "/admin/events" },
   { name: "Tee Times", icon: Clock, href: "/admin/teetimes" },
   { name: "Courses", icon: LandPlot, href: "/admin/courses" },
+  { name: "Rooms", icon: Hotel, href: "/admin/rooms" },
   { name: "Members", icon: Users, href: "/admin/members" },
   { name: "Settings", icon: Settings, href: "/admin/settings" },
 ];
@@ -68,7 +69,7 @@ export default function AdminDashboard({
   };
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
+    <div className="flex min-h-screen bg-background text-foreground-alt">
       {/* Desktop Sidebar */}
       <aside className="hidden md:block fixed left-0 top-0 z-40 h-1/2 w-64 bg-background mt-16">
         <Sidebar className="text-foreground-alt"/>
@@ -77,7 +78,7 @@ export default function AdminDashboard({
       {/* Main content */}
       <div className="flex flex-col flex-1 md:ml-64">
         {/* Top bar */}
-        <header className="fixed top-16 right-0 left-0 md:left-64 z-30 flex items-center justify-between px-4 py-4 bg-background/50 backdrop-blur-md shadow-md lg:px-6">
+        <header className="fixed top-16 right-0 left-0 md:left-64 z-30 flex items-center justify-between px-4 py-4 bg-background lg:px-6">
           <h1 className="text-2xl font-semibold text-foreground-alt">{getPageTitle()}</h1>
           <div className="flex items-center gap-4">
            
@@ -95,7 +96,7 @@ export default function AdminDashboard({
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="w-64 pt-20 bg-background/50 backdrop-blur-md"
+                className="w-64 pt-20 bg-background/60 backdrop-blur-md"
               >
                 <Sidebar />
               </SheetContent>

@@ -1,6 +1,5 @@
-// app/admin/teetimes/page.tsx
-'use client';
-
+// app/admin/teetimes/TeeTimeClient.tsx
+"use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -21,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { getTeeTimes, deleteTeeTime, addTeeTime } from "./actions";
 
 interface TeeTime {
@@ -39,6 +39,7 @@ export default function AdminTeeTimesPage({ initialTeeTimes }: AdminTeeTimesPage
   const [teeTimes, setTeeTimes] = useState<TeeTime[]>(initialTeeTimes);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAddTeeTimeOpen, setIsAddTeeTimeOpen] = useState(false);
   const router = useRouter();
 
   const handleDelete = async (id: string) => {
@@ -72,7 +73,7 @@ export default function AdminTeeTimesPage({ initialTeeTimes }: AdminTeeTimesPage
     try {
       const newTeeTime = await addTeeTime(teeTimeData);
       setTeeTimes([...teeTimes, newTeeTime]);
-      // Close the dialog (you might need to implement this logic)
+      setIsAddTeeTimeOpen(false);
     } catch (err) {
       console.error(err);
       setError("Failed to add tee time");
@@ -87,9 +88,9 @@ export default function AdminTeeTimesPage({ initialTeeTimes }: AdminTeeTimesPage
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Manage Tee Times</h1>
-      <Dialog>
+      <Dialog open={isAddTeeTimeOpen} onOpenChange={setIsAddTeeTimeOpen}>
         <DialogTrigger asChild>
-          <Button className="mb-4">Add New Tee Time</Button>
+          <Button className="mb-4 text-white">Add New Tee Time</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -116,29 +117,63 @@ export default function AdminTeeTimesPage({ initialTeeTimes }: AdminTeeTimesPage
           </form>
         </DialogContent>
       </Dialog>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>Time</TableHead>
-            <TableHead>Course</TableHead>
-            <TableHead>Available Slots</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {teeTimes.map((teeTime) => (
-            <TableRow key={teeTime._id}>
-              <TableCell>
-                {new Date(teeTime.date).toLocaleDateString()}
-              </TableCell>
-              <TableCell>{teeTime.time}</TableCell>
-              <TableCell>{teeTime.course.name}</TableCell>
-              <TableCell>{teeTime.availableSlots}</TableCell>
-              <TableCell>
+      
+      {/* Desktop view */}
+      <div className="hidden md:block overflow-x-auto">
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead>Time</TableHead>
+              <TableHead>Course</TableHead>
+              <TableHead>Available Slots</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {teeTimes.map((teeTime) => (
+              <TableRow key={teeTime._id}>
+                <TableCell>
+                  {new Date(teeTime.date).toLocaleDateString()}
+                </TableCell>
+                <TableCell>{teeTime.time}</TableCell>
+                <TableCell>{teeTime.course.name}</TableCell>
+                <TableCell>{teeTime.availableSlots}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    className="mr-2"
+                    onClick={() => router.push(`/admin/teetimes/${teeTime._id}`)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleDelete(teeTime._id)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Mobile view */}
+      <div className="md:hidden space-y-4">
+        {teeTimes.map((teeTime) => (
+          <Card key={teeTime._id}>
+            <CardHeader>
+              <CardTitle>{new Date(teeTime.date).toLocaleDateString()}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Time: {teeTime.time}</p>
+              <p>Course: {teeTime.course.name}</p>
+              <p>Available Slots: {teeTime.availableSlots}</p>
+              <div className="mt-4 space-x-2">
                 <Button
                   variant="outline"
-                  className="mr-2"
                   onClick={() => router.push(`/admin/teetimes/${teeTime._id}`)}
                 >
                   Edit
@@ -149,11 +184,11 @@ export default function AdminTeeTimesPage({ initialTeeTimes }: AdminTeeTimesPage
                 >
                   Delete
                 </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

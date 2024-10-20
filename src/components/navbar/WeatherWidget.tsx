@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { Sun, Cloud, CloudRain, Snowflake } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { getWeatherData } from '@/app/actions/fetchWeather';
 
 interface WeatherData {
   temperature: number;
@@ -11,23 +12,6 @@ interface WeatherData {
 }
 
 const CACHE_DURATION = 3600000; // 1 hour in milliseconds
-
-const getWeatherData = async (): Promise<WeatherData | null> => {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/weather`, {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) {
-      throw new Error("Failed to fetch weather data");
-    }
-    console.log("Weather data fetched successfully");
-    const data = await res.json();
-    return { ...data, timestamp: Date.now() };
-  } catch (error) {
-    console.error("Error fetching weather data:", error);
-    return null;
-  }
-};
 
 const WeatherWidget: React.FC = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
@@ -48,8 +32,9 @@ const WeatherWidget: React.FC = () => {
       // If no valid cached data, fetch new data
       const newData = await getWeatherData();
       if (newData) {
-        setWeatherData(newData);
-        localStorage.setItem('weatherData', JSON.stringify(newData));
+        const weatherWithTimestamp = { ...newData, timestamp: Date.now() };
+        setWeatherData(weatherWithTimestamp);
+        localStorage.setItem('weatherData', JSON.stringify(weatherWithTimestamp));
       }
     };
 

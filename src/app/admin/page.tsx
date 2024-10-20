@@ -55,7 +55,7 @@ export default async function AdminDashboard() {
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         {/* Total Members */}
-        <Card>
+        <Card className="bg-card-alt">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Members
@@ -67,7 +67,7 @@ export default async function AdminDashboard() {
           </CardContent>
         </Card>
         {/* Total Events */}
-        <Card>
+        <Card className="bg-card-alt">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Events
@@ -79,7 +79,7 @@ export default async function AdminDashboard() {
           </CardContent>
         </Card>
         {/* Total Bookings */}
-        <Card>
+        <Card className="bg-card-alt">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Bookings
@@ -91,7 +91,7 @@ export default async function AdminDashboard() {
           </CardContent>
         </Card>
         {/* Total Tee Times */}
-        <Card>
+        <Card className="bg-card-alt">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Tee Times
@@ -102,7 +102,7 @@ export default async function AdminDashboard() {
             <div className="text-2xl font-bold">{teeTimeCount}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-card-alt">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Courses
@@ -115,7 +115,7 @@ export default async function AdminDashboard() {
         </Card>
       </div>
       {/* Recent Bookings */}
-      <Card className="mt-4">
+      <Card className="mt-4 bg-card-alt">
         <CardHeader>
           <CardTitle>Recent Bookings</CardTitle>
           <CardDescription>

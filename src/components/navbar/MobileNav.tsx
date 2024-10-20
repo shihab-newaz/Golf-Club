@@ -5,7 +5,7 @@ import { LogIn, Menu, ChevronDown, ChevronUp, User } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import WeatherWidget from "@/components/navbar/weather-widget";
+import WeatherWidget from "@/components/navbar/WeatherWidget";
 
 const navLinks = [
   { href: "/courses", label: "COURSES" },

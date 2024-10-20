@@ -1,6 +1,6 @@
 // app/admin/teetimes/page.tsx
 import { Suspense } from 'react';
-import AdminTeeTimesPageClient from './TeeTimeClient';
+import AdminTeeTimesPageClient from './client';
 import { getTeeTimes } from './actions';
 
 export default async function AdminTeeTimesPage() {

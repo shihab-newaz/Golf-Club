@@ -16,7 +16,8 @@ const config: Config = {
         'foreground-alt': 'hsl(var(--foreground-alt))',
         card: {
           DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))'
+          foreground: 'hsl(var(--card-foreground))',
+          alt: 'hsl(var(--card-alt))'
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',
@@ -45,6 +46,7 @@ const config: Config = {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         link: 'hsl(var(--link))',
+        button: 'hsl(var(--button))',
         ring: 'hsl(var(--ring))',
         chart: {
           '1': 'hsl(var(--chart-1))',
@@ -53,6 +55,9 @@ const config: Config = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))'
         }
+      },
+      backgroundColor: {
+        button: 'hsl(var(--button))',
       },
       borderRadius: {
         lg: 'var(--radius)',

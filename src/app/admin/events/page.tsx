@@ -1,6 +1,6 @@
 // app/admin/events/page.tsx
 import { Suspense } from 'react';
-import AdminEventsPageClient from './EventClient';
+import AdminEventsPageClient from './client';
 import { getEvents } from './actions';
 
 export default async function AdminEventsPage() {

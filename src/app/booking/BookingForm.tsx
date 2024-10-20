@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -20,32 +21,58 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { fetchAvailableTimes, fetchAvailableRooms, bookTeeTime } from "./actions";
+import { useSession } from "next-auth/react";
 
 interface TeeTime {
   _id: string;
   time: string;
 }
 
+interface HotelRoom {
+  _id: string;
+  roomNumber: string;
+  type: "standard" | "deluxe" | "suite";
+  capacity: number;
+  pricePerNight: number;
+  amenities?: string[];
+  description?: string;
+}
+
 export default function BookingForm() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [time, setTime] = useState<string>("");
+  const [teeTimeId, setTeeTimeId] = useState<string>("");
   const [players, setPlayers] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [bookRoom, setBookRoom] = useState<boolean>(false);
+  const [hotelRoomId, setHotelRoomId] = useState<string>("");
+  const [checkInDate, setCheckInDate] = useState<Date | undefined>();
+  const [checkOutDate, setCheckOutDate] = useState<Date | undefined>();
   const [availableTimes, setAvailableTimes] = useState<TeeTime[]>([]);
+  const [availableRooms, setAvailableRooms] = useState<HotelRoom[]>([]);
   const { toast } = useToast();
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (date) {
-      fetchAvailableTimes(date);
+      handleFetchAvailableTimes(date);
     }
   }, [date]);
 
-  const fetchAvailableTimes = async (selectedDate: Date) => {
-    const response = await fetch(`/api/available-tee-times?date=${selectedDate.toISOString()}`);
-    if (response.ok) {
-      const data = await response.json();
-      setAvailableTimes(data);
-    } else {
+  useEffect(() => {
+    if (bookRoom && checkInDate && checkOutDate) {
+      handleFetchAvailableRooms(checkInDate, checkOutDate);
+    }
+  }, [bookRoom, checkInDate, checkOutDate]);
+
+  const handleFetchAvailableTimes = async (selectedDate: Date) => {
+    try {
+      const times = await fetchAvailableTimes(selectedDate.toISOString());
+      setAvailableTimes(times);
+    } catch (error) {
       toast({
         title: "Error",
         description: "Failed to fetch available tee times",
@@ -54,43 +81,61 @@ export default function BookingForm() {
     }
   };
 
+  const handleFetchAvailableRooms = async (checkIn: Date, checkOut: Date) => {
+    try {
+      const rooms = await fetchAvailableRooms(checkIn.toISOString(), checkOut.toISOString());
+      setAvailableRooms(rooms);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch available rooms",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!date || !time || !players) {
+    if (!date || !teeTimeId || !players || !phoneNumber || !session?.user?.id) {
       toast({
         title: "Booking Error",
-        description: "Please fill in all fields",
+        description: "Please fill in all required fields and ensure you're logged in",
         variant: "destructive",
       });
       return;
     }
 
-    const bookingData = {
-      date: date.toISOString(),
-      time,
-      players: parseInt(players),
-    };
+    try {
+      const result = await bookTeeTime({
+        userId: session.user.id,
+        teeTimeId,
+        hotelRoomId: bookRoom ? hotelRoomId : undefined,
+        phoneNumber,
+        players: parseInt(players),
+        checkInDate: checkInDate?.toISOString(),
+        checkOutDate: checkOutDate?.toISOString(),
+      });
 
-    const response = await fetch('/api/book-tee-time', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(bookingData),
-    });
-
-    if (response.ok) {
       toast({
         title: "Booking Submitted",
-        description: "Your tee time has been booked successfully.",
+        description: result.message,
       });
-      // Refetch available times to update the list
-      fetchAvailableTimes(date);
-    } else {
+      
+      // Reset form and refetch available times
+      handleFetchAvailableTimes(date);
+      setTime("");
+      setTeeTimeId("");
+      setPlayers("");
+      setPhoneNumber("");
+      setBookRoom(false);
+      setHotelRoomId("");
+      setCheckInDate(undefined);
+      setCheckOutDate(undefined);
+    } catch (error) {
       toast({
         title: "Booking Error",
-        description: "Failed to book tee time. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to book. Please try again.",
         variant: "destructive",
       });
     }
@@ -104,8 +149,8 @@ export default function BookingForm() {
     >
       <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Reserve Your Tee Time</CardTitle>
-          <CardDescription>Select your preferred date and time</CardDescription>
+          <CardTitle>Reserve Your Tee Time and Hotel Room</CardTitle>
+          <CardDescription>Select your preferred date, time, and optional accommodation</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -120,37 +165,107 @@ export default function BookingForm() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="time">Time</Label>
-              <div className="border border-gray-700 dark:border-white rounded-sm">
-                <Select onValueChange={setTime}>
-                  <SelectTrigger id="time">
-                    <SelectValue placeholder="Select a time" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableTimes.map((teeTime) => (
-                      <SelectItem key={teeTime._id} value={teeTime.time}>
-                        {teeTime.time}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <Select onValueChange={(value) => {
+                const [id, time] = value.split('|');
+                setTeeTimeId(id);
+                setTime(time);
+              }}>
+                <SelectTrigger id="time">
+                  <SelectValue placeholder="Select a time" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableTimes.map((teeTime) => (
+                    <SelectItem key={teeTime._id} value={`${teeTime._id}|${teeTime.time}`}>
+                      {teeTime.time}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="players">Number of Players</Label>
-              <div className="border border-gray-700 dark:border-white rounded-sm">
-                <Select onValueChange={setPlayers}>
-                  <SelectTrigger id="players">
-                    <SelectValue placeholder="Select number of players" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 Player</SelectItem>
-                    <SelectItem value="2">2 Players</SelectItem>
-                    <SelectItem value="3">3 Players</SelectItem>
-                    <SelectItem value="4">4 Players</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Select onValueChange={setPlayers}>
+                <SelectTrigger id="players">
+                  <SelectValue placeholder="Select number of players" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1 Player</SelectItem>
+                  <SelectItem value="2">2 Players</SelectItem>
+                  <SelectItem value="3">3 Players</SelectItem>
+                  <SelectItem value="4">4 Players</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="phoneNumber">Phone Number</Label>
+              <Input
+                id="phoneNumber"
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="bookRoom"
+                checked={bookRoom}
+                onCheckedChange={(checked) => setBookRoom(checked as boolean)}
+              />
+              <Label htmlFor="bookRoom">Book a hotel room</Label>
+            </div>
+            {bookRoom && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="checkInDate">Check-in Date</Label>
+                  <Calendar
+                    mode="single"
+                    selected={checkInDate}
+                    onSelect={setCheckInDate}
+                    className="rounded-md border"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="checkOutDate">Check-out Date</Label>
+                  <Calendar
+                    mode="single"
+                    selected={checkOutDate}
+                    onSelect={setCheckOutDate}
+                    className="rounded-md border"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="hotelRoom">Hotel Room</Label>
+                  <Select onValueChange={setHotelRoomId}>
+                    <SelectTrigger id="hotelRoom">
+                      <SelectValue placeholder="Select a room" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableRooms.map((room) => (
+                        <SelectItem key={room._id} value={room._id}>
+                          {`${room.roomNumber} - ${room.type} (${room.capacity} person${room.capacity > 1 ? 's' : ''}) - $${room.pricePerNight}/night`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {hotelRoomId && (
+                  <div className="space-y-2">
+                    <Label>Room Details</Label>
+                    {availableRooms.find(room => room._id === hotelRoomId)?.description && (
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        {availableRooms.find(room => room._id === hotelRoomId)?.description}
+                      </p>
+                    )}
+                    {availableRooms.find(room => room._id === hotelRoomId)?.amenities && (
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        Amenities: {availableRooms.find(room => room._id === hotelRoomId)?.amenities?.join(', ')}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
             <Button
               type="submit"
               className="w-full bg-green-600 hover:bg-green-700 text-white"

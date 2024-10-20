@@ -22,7 +22,7 @@ export default function MembershipCTA() {
           </p>
           <Button
             variant="outline"
-            className="text-primary border-white hover:bg-white hover:text-green-800"
+            className="text-white bg-green-800 border-white hover:bg-white hover:text-green-800"
           >
             <Link href="/subscription">
               Explore Memberships 
