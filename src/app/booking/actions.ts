@@ -1,80 +1,95 @@
 // app/booking/actions.ts
 'use server'
 
-import dbConnect from "@/lib/mongoose";
-import TeeTime from "@/models/TeeTime";
-import Booking from "@/models/Booking";
-import HotelRoom from "@/models/HotelRoom";
+import { revalidatePath } from 'next/cache'
+import dbConnect from "@/lib/mongoose"
+import Booking from "@/models/Booking"
+import TeeTime from "@/models/TeeTime"
+import HotelRoom from "@/models/HotelRoom"
+import { TeeTimeBooking, HotelBooking } from './types'
 
 export async function fetchAvailableTimes(date: string) {
-  await dbConnect();
-  const selectedDate = new Date(date);
-  const startOfDay = new Date(selectedDate.setHours(0, 0, 0, 0));
-  const endOfDay = new Date(selectedDate.setHours(23, 59, 59, 999));
+  await dbConnect()
+  
+  // Convert the input date to the start and end of the day
+  const startDate = new Date(date)
+  startDate.setHours(0, 0, 0, 0)
+  
+  const endDate = new Date(date)
+  endDate.setHours(23, 59, 59, 999)
 
-  const availableTimes = await TeeTime.find({
-    date: { $gte: startOfDay, $lte: endOfDay },
+  const teeTimes = await TeeTime.find({
+    date: {
+      $gte: startDate,
+      $lte: endDate
+    },
     isAvailable: true,
-  }).select('_id time');
+    availableSlots: { $gt: 0 }
+  }).sort({ time: 1 })
 
-  return JSON.parse(JSON.stringify(availableTimes));
+  // Transform the data to match TeeTimeBooking interface
+  return teeTimes.map(time => ({
+    _id: time._id.toString(),
+    teeTimeId: time._id.toString(),
+    date: time.date,
+    time: time.time,
+    available: time.isAvailable,
+    availableSlots: time.availableSlots,
+    price: time.price,
+    players: 0,
+    phoneNumber: ''
+  }))
 }
 
-export async function fetchAvailableRooms(checkInDate: string, checkOutDate: string) {
-  await dbConnect();
-  const availableRooms = await HotelRoom.find({
-    isAvailable: true,
-    // Add more complex logic here if needed to check room availability for the given dates
-  }).select('_id roomNumber type capacity pricePerNight amenities description');
-
-  return JSON.parse(JSON.stringify(availableRooms));
+export async function fetchAvailableRooms(checkIn: string, checkOut: string) {
+  await dbConnect()
+  // Add logic to check room availability based on dates
+  const rooms = await HotelRoom.find({ isAvailable: true })
+  return rooms
 }
 
-export async function bookTeeTime(bookingData: {
-  userId: string;
-  teeTimeId: string;
-  hotelRoomId?: string;
-  phoneNumber: string;
-  players: number;
-  checkInDate?: string;
-  checkOutDate?: string;
+export async function bookTeeTime({
+  teeTimeBooking,
+  hotelBooking
+}: {
+  teeTimeBooking: TeeTimeBooking
+  hotelBooking?: HotelBooking
 }) {
-  await dbConnect();
-  const { userId, teeTimeId, hotelRoomId, phoneNumber, players, checkInDate, checkOutDate } = bookingData;
+  await dbConnect()
 
-  const teeTime = await TeeTime.findById(teeTimeId);
-  if (!teeTime || !teeTime.isAvailable) {
-    throw new Error("Selected tee time is no longer available");
-  }
-
-  let hotelRoom;
-  if (hotelRoomId) {
-    hotelRoom = await HotelRoom.findById(hotelRoomId);
-    if (!hotelRoom || !hotelRoom.isAvailable) {
-      throw new Error("Selected hotel room is no longer available");
-    }
-  }
-
-  const newBooking = new Booking({
-    user: userId,
-    teeTime: teeTimeId,
-    resortRoom: hotelRoomId,
-    phoneNumber,
-    players,
-    status: "confirmed",
-    checkInDate: checkInDate ? new Date(checkInDate) : undefined,
-    checkOutDate: checkOutDate ? new Date(checkOutDate) : undefined,
+  // Create booking
+  const booking = new Booking({
+    user: teeTimeBooking.userId,
+    teeTime: teeTimeBooking.teeTimeId,
+    phoneNumber: teeTimeBooking.phoneNumber,
+    players: teeTimeBooking.players,
+    status: 'pending',
     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
-  });
+    ...(hotelBooking && {
+      resortRoom: hotelBooking.roomId,
+      checkInDate: hotelBooking.checkInDate,
+      checkOutDate: hotelBooking.checkOutDate
+    })
+  })
 
-  await newBooking.save();
-  teeTime.isAvailable = false;
-  await teeTime.save();
+  await booking.save()
 
-  if (hotelRoom) {
-    hotelRoom.isAvailable = false;
-    await hotelRoom.save();
+  // Update tee time availability
+  await TeeTime.findByIdAndUpdate(teeTimeBooking.teeTimeId, {
+    $inc: { availableSlots: -teeTimeBooking.players }
+  })
+
+  if (hotelBooking) {
+    // Update hotel room availability
+    await HotelRoom.findByIdAndUpdate(hotelBooking.roomId, {
+      isAvailable: false
+    })
   }
 
-  return { success: true, message: "Booking confirmed successfully" };
+  revalidatePath('/booking')
+  
+  return {
+    success: true,
+    message: 'Booking completed successfully'
+  }
 }

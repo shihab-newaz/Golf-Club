@@ -12,11 +12,11 @@ import Link from "next/link";
 
 const Logo: React.FC = () => (
     <Link href="/" className="flex items-center space-x-2">
-      <div className="w-8 h-8 rounded-full border-2 border-primary flex items-center justify-center">
-        <span className="text-primary font-bold">GC</span>
+      <div className="w-10 h-9 rounded-full border-2 border-primary flex items-center justify-center">
+        <span className="text-primary font-bold">DCC</span>
       </div>
       <span className="text-base font-semibold hover:text-link">
-        GOLF CLUB
+        DAEHO CC
       </span>
     </Link>
   );

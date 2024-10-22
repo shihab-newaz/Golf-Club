@@ -1,14 +1,26 @@
 // app/booking/page.tsx
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import BookingForm from "./BookingForm";
-import Features from "./Features";
-import MembershipCTA from "./MembershipCTA";
+import { TeeTimeBookingForm } from "./TeeTimeBooking";
+import { HotelBookingForm } from "./HotelBooking";
+import  {TeeTimeBooking}  from "./types";
 
 export default function BookingPage() {
+  const [bookingStep, setBookingStep] = useState<"teeTime" | "hotel">("teeTime");
+  const [teeTimeBooking, setTeeTimeBooking] = useState<TeeTimeBooking | null>(null);
+
+  const handleTeeTimeComplete = (booking: TeeTimeBooking) => {
+    setTeeTimeBooking(booking);
+    setBookingStep("hotel");
+  };
+
+  const handleBack = () => {
+    setBookingStep("teeTime");
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       <main className="flex-grow">
@@ -35,14 +47,19 @@ export default function BookingPage() {
                 Experience the finest golf at Daeho Country Club
               </p>
             </motion.div>
-            
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <BookingForm />
-              <Features />
+
+            <div className="grid md:grid-cols-2 gap-8 items-start">
+              {bookingStep === "teeTime" ? (
+                <TeeTimeBookingForm onComplete={handleTeeTimeComplete} />
+              ) : teeTimeBooking ? (
+                <HotelBookingForm 
+                  teeTimeBooking={teeTimeBooking} 
+                  onBack={handleBack}
+                />
+              ) : null}
             </div>
           </div>
         </section>
-        <MembershipCTA />
       </main>
     </div>
   );
