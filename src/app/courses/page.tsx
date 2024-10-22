@@ -38,7 +38,7 @@ async function getCoursesData() {
   });
 }
 
-export default async function KoreaGolfCoursePage() {
+export default async function GolfCoursePage() {
   const coursesData = await getCoursesData();
   
   // Extract image URLs from course data

@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
 interface Course {
   id: string;
@@ -44,9 +45,11 @@ const CoursesSection: React.FC<CoursesSectionProps> = ({ courses }) => {
                 <p>Difficulty: {course.difficulty}</p>
                 <p>Status: {course.isOpen ? 'Open' : 'Closed'}</p>
               </div>
+              <Link href={`/courses/${course.id}`}>
               <Button className="w-full bg-green-600 hover:bg-green-700 text-white transition duration-300 ease-in-out transform hover:scale-105 mt-auto">
                 Learn More
               </Button>
+              </Link>
             </CardContent>
           </Card>
         ))}

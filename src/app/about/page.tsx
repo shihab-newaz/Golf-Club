@@ -62,7 +62,7 @@ const AboutPage: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen w-full bg-green-50 dark:bg-gray-900">
       <header className="bg-green-50 dark:bg-gray-900 text-green-800 dark:text-white mt-20 text-center">
-        <h1 className="text-4xl font-bold">Deaho Golf & Country Club</h1>
+        <h1 className="text-4xl font-bold">Daeho Golf & Country Club</h1>
       </header>
       <main className="container mx-auto px-4 py-8 space-y-12">
         {/* About Section */}
@@ -77,7 +77,7 @@ const AboutPage: React.FC = () => {
               About Us
             </h2>
             <p className="text-lg text-gray-700 dark:text-gray-300">
-              Deaho Golf & Country Club is a premier destination for golf
+             Daeho Golf & Country Club is a premier destination for golf
               enthusiasts and those seeking a luxurious retreat. Established in
               1975, our club boasts a championship 18-hole golf course,
               state-of-the-art facilities, and a vibrant community of members.
@@ -106,7 +106,7 @@ const AboutPage: React.FC = () => {
           <div className="md:w-1/3">
             <Image
               src="/placeholder.svg"
-              alt="CEO Jane Doe"
+              alt="CEO"
               width={300}
               height={400}
               className="rounded-lg shadow-lg"
@@ -116,11 +116,11 @@ const AboutPage: React.FC = () => {
             <h2 className="text-3xl font-semibold mb-4 text-green-800 dark:text-green-400">CEO's Vision</h2>
             <Card>
               <CardHeader>
-                <CardTitle>A Message from Our CEO, Jane Doe</CardTitle>
+                <CardTitle>A Message from Our CEO, Mr.X</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 dark:text-gray-300">
-                  "At Evergreen Golf & Country Club, we envision more than just a golf course. We're creating a community 
+                  "At Daeho Golf & Country Club, we envision more than just a golf course. We're creating a community 
                   where passion for the sport meets luxury living. Our goal is to provide an exceptional experience for 
                   every member and guest, fostering a sense of belonging and pride. We're committed to maintaining the 
                   highest standards in course conditions, customer service, and environmental stewardship. As we look to 
@@ -222,7 +222,7 @@ const AboutPage: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p>info@evergreengolf.com</p>
+                <p>info@daehocc.com</p>
               </CardContent>
             </Card>
             <Card>

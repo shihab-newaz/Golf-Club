@@ -12,11 +12,11 @@ const Footer: React.FC = () => {
           {/* Logo and Company Info */}
           <div className="col-span-1">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 rounded-full border-2 border-black dark:border-white flex items-center justify-center">
-                <span className="text-black dark:text-white font-bold">GC</span>
+              <div className="w-10 h-9 rounded-full border-2 border-black dark:border-white flex items-center justify-center">
+                <span className="text-black dark:text-white font-bold">DCC</span>
               </div>
               <span className="text-black dark:text-white font-semibold">
-                GOLF CLUB
+               DAEHO CC
               </span>
             </div>
             <p className="text-sm">Luxury without limits</p>
@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="#"
+                  href="/about"
                   className="hover:text-gray-600 dark:hover:text-gray-300"
                 >
                   About Us
@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/subscription"
                   className="hover:text-gray-600 dark:hover:text-gray-300"
                 >
                   Membership
@@ -44,7 +44,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/services"
                   className="hover:text-gray-600 dark:hover:text-gray-300"
                 >
                   Facilities
@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/events"
                   className="hover:text-gray-600 dark:hover:text-gray-300"
                 >
                   Events
@@ -91,7 +91,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/about"
                   className="hover:text-gray-600 dark:hover:text-gray-300"
                 >
                   Contact Us
