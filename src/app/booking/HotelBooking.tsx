@@ -1,5 +1,4 @@
-// app/booking/HotelBookingForm.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -54,27 +53,30 @@ export function HotelBookingForm({
   const { toast } = useToast();
   const { data: session } = useSession();
 
+  const fetchRooms = useCallback(
+    async (checkIn: Date, checkOut: Date) => {
+      try {
+        const rooms = await fetchAvailableRooms(
+          checkIn.toISOString(),
+          checkOut.toISOString()
+        );
+        setAvailableRooms(rooms);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch available rooms",
+          variant: "destructive",
+        });
+      }
+    },
+    [toast]
+  );
+
   useEffect(() => {
     if (checkInDate && checkOutDate) {
-      handleFetchAvailableRooms(checkInDate, checkOutDate);
+      fetchRooms(checkInDate, checkOutDate);
     }
-  }, [checkInDate, checkOutDate]);
-
-  const handleFetchAvailableRooms = async (checkIn: Date, checkOut: Date) => {
-    try {
-      const rooms = await fetchAvailableRooms(
-        checkIn.toISOString(),
-        checkOut.toISOString()
-      );
-      setAvailableRooms(rooms);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch available rooms",
-        variant: "destructive",
-      });
-    }
-  };
+  }, [checkInDate, checkOutDate, fetchRooms]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,6 +119,7 @@ export function HotelBookingForm({
       });
     }
   };
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

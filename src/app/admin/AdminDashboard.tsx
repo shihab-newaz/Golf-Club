@@ -3,6 +3,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Bell,
@@ -32,7 +33,7 @@ const sidebarItems = [
 const Sidebar = ({ className = "" }) => (
   <div className={`flex flex-col h-full pt-5 overflow-y-auto ${className}`}>
     <div className="flex items-center flex-shrink-0 px-4">
-      <img
+      <Image
         className="w-auto h-8"
         src="/placeholder.svg?height=32&width=32"
         alt="Golf Course Logo"

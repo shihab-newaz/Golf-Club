@@ -1,5 +1,4 @@
-// app/booking/TeeTimeBookingForm.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -21,17 +20,18 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { fetchAvailableTimes } from "./actions";
-import  {TeeTimeBooking} from "./types";
-
-
+import { TeeTimeBooking } from "./types";
 
 interface TeeTimeBookingFormProps {
   onComplete: (bookingDetails: TeeTimeBooking) => void;
 }
-const inputStyles = "border-[1.5px] border-black dark:border-white focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-black dark:focus-visible:border-white";
-const calendarStyles = "rounded-md border-[1.5px] border-black dark:border-white";
 
-export function TeeTimeBookingForm({onComplete}: TeeTimeBookingFormProps) {
+const inputStyles =
+  "border-[1.5px] border-black dark:border-white focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-black dark:focus-visible:border-white";
+const calendarStyles =
+  "rounded-md border-[1.5px] border-black dark:border-white";
+
+export function TeeTimeBookingForm({ onComplete }: TeeTimeBookingFormProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [time, setTime] = useState<string>("");
   const [teeTimeId, setTeeTimeId] = useState<string>("");
@@ -39,25 +39,28 @@ export function TeeTimeBookingForm({onComplete}: TeeTimeBookingFormProps) {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [availableTimes, setAvailableTimes] = useState<TeeTimeBooking[]>([]);
   const { toast } = useToast();
- 
+
+  const fetchTimes = useCallback(
+    async (selectedDate: Date) => {
+      try {
+        const times = await fetchAvailableTimes(selectedDate.toISOString());
+        setAvailableTimes(times);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch available tee times",
+          variant: "destructive",
+        });
+      }
+    },
+    [toast]
+  );
+
   useEffect(() => {
     if (date) {
-      handleFetchAvailableTimes(date);
+      fetchTimes(date);
     }
-  }, [date]);
-
-  const handleFetchAvailableTimes = async (selectedDate: Date) => {
-    try {
-      const times = await fetchAvailableTimes(selectedDate.toISOString());
-      setAvailableTimes(times);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch available tee times",
-        variant: "destructive",
-      });
-    }
-  };
+  }, [date, fetchTimes]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +76,7 @@ export function TeeTimeBookingForm({onComplete}: TeeTimeBookingFormProps) {
 
     onComplete({
       _id: teeTimeId,
-      teeTimeId: teeTimeId, 
+      teeTimeId: teeTimeId,
       date: date,
       time: time,
       players: parseInt(players),
@@ -81,7 +84,6 @@ export function TeeTimeBookingForm({onComplete}: TeeTimeBookingFormProps) {
       available: true,
     });
   };
-
 
   return (
     <motion.div
@@ -115,7 +117,7 @@ export function TeeTimeBookingForm({onComplete}: TeeTimeBookingFormProps) {
                 }}
               >
                 <SelectTrigger id="time" className={inputStyles}>
-                  <SelectValue  placeholder="Select a time" />
+                  <SelectValue placeholder="Select a time" />
                 </SelectTrigger>
                 <SelectContent className={inputStyles}>
                   {availableTimes.map((teeTime) => (
@@ -151,7 +153,7 @@ export function TeeTimeBookingForm({onComplete}: TeeTimeBookingFormProps) {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 className={inputStyles}
-                required      
+                required
               />
             </div>
             <Button
