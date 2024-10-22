@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { Navbar, Footer } from "@/components";
 import { Toaster } from "@/components/ui/toaster";
+import { Analytics } from "@vercel/analytics/react"
 
 export const metadata: Metadata = {
   title: "DCC - Luxury Golf Club ",
@@ -78,6 +79,7 @@ export default function RootLayout({
             <main className="">{children}</main>
             <Toaster />
             <Footer />
+            <Analytics />
           </ThemeProvider>
         </SessionProvider>
       </body>
