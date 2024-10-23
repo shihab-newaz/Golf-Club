@@ -35,7 +35,10 @@ const Sidebar = ({ className = "" }) => (
     <div className="flex items-center flex-shrink-0 px-4">
       <Image
         className="w-auto h-8"
-        src="/placeholder.svg?height=32&width=32"
+        src="/placeholder.svg"
+        width={32}
+        height={32}
+        priority
         alt="Golf Course Logo"
       />
       <span className="ml-2 text-xl font-semibold">Admin</span>

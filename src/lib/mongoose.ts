@@ -1,3 +1,4 @@
+import exp from 'constants';
 import mongoose, { Mongoose } from 'mongoose'
 
 // Define global types for TypeScript
@@ -66,5 +67,5 @@ async function dbConnect(): Promise<Mongoose> {
     throw e
   }
 }
-
-export default dbConnect
+export default dbConnect;
+  

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Sun, Cloud, CloudRain, Snowflake } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { getWeatherData } from '@/app/actions/fetchWeather';
+import { getWeatherData } from '@/app/actions/weather';
 
 interface WeatherData {
   temperature: number;

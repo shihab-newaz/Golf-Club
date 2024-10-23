@@ -28,8 +28,8 @@ interface TeeTimeBookingFormProps {
 
 const inputStyles =
   "border-[1.5px] border-black dark:border-white focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-black dark:focus-visible:border-white";
-const calendarStyles =
-  "rounded-md border-[1.5px] border-black dark:border-white";
+  const calendarStyles =
+  "rounded-md border-[1.5px] border-black dark:border-white w-[240px] xs:w-[250px] sm:w-[300px] md:w-[330px] lg:w-[330px]";
 
 export function TeeTimeBookingForm({ onComplete }: TeeTimeBookingFormProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -90,63 +90,86 @@ export function TeeTimeBookingForm({ onComplete }: TeeTimeBookingFormProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
+      className="w-full md:w-2/3 lg:w-1/2 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
     >
       <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle>Reserve Your Tee Time</CardTitle>
-          <CardDescription>Select your preferred date and time</CardDescription>
+        <CardHeader className="space-y-1 sm:space-y-2">
+          <CardTitle className="text-xl sm:text-2xl">
+            Reserve Your Tee Time
+          </CardTitle>
+          <CardDescription className="text-sm sm:text-base">
+            Select your preferred date and time
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="date">Date</Label>
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                className={calendarStyles}
-              />
+              <Label htmlFor="date" className="text-sm sm:text-base">
+                Date
+              </Label>
+              <div className="flex justify-center sm:justify-start">
+                <div className="flex justify-center">
+                  {" "}
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    className={calendarStyles}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="time">Time</Label>
-              <Select
-                onValueChange={(value) => {
-                  const [id, time] = value.split("|");
-                  setTeeTimeId(id);
-                  setTime(time);
-                }}
-              >
-                <SelectTrigger id="time" className={inputStyles}>
-                  <SelectValue placeholder="Select a time" />
-                </SelectTrigger>
-                <SelectContent className={inputStyles}>
-                  {availableTimes.map((teeTime) => (
-                    <SelectItem
-                      key={teeTime._id}
-                      value={`${teeTime._id}|${teeTime.time}`}
-                    >
-                      {teeTime.time}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="time" className="text-sm sm:text-base">
+                  Time
+                </Label>
+                <Select
+                  onValueChange={(value) => {
+                    const [id, time] = value.split("|");
+                    setTeeTimeId(id);
+                    setTime(time);
+                  }}
+                >
+                  <SelectTrigger id="time" className={inputStyles}>
+                    <SelectValue placeholder="Select a time" />
+                  </SelectTrigger>
+                  <SelectContent className={inputStyles}>
+                    {availableTimes.map((teeTime) => (
+                      <SelectItem
+                        key={teeTime._id}
+                        value={`${teeTime._id}|${teeTime.time}`}
+                      >
+                        {teeTime.time}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="players" className="text-sm sm:text-base">
+                  Number of Players
+                </Label>
+                <Select onValueChange={setPlayers}>
+                  <SelectTrigger id="players" className={inputStyles}>
+                    <SelectValue placeholder="Select players" />
+                  </SelectTrigger>
+                  <SelectContent className={inputStyles}>
+                    <SelectItem value="1">1 Player</SelectItem>
+                    <SelectItem value="2">2 Players</SelectItem>
+                    <SelectItem value="3">3 Players</SelectItem>
+                    <SelectItem value="4">4 Players</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="players">Number of Players</Label>
-              <Select onValueChange={setPlayers}>
-                <SelectTrigger id="players" className={inputStyles}>
-                  <SelectValue placeholder="Select number of players" />
-                </SelectTrigger>
-                <SelectContent className={inputStyles}>
-                  <SelectItem value="1">1 Player</SelectItem>
-                  <SelectItem value="2">2 Players</SelectItem>
-                  <SelectItem value="3">3 Players</SelectItem>
-                  <SelectItem value="4">4 Players</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
+              <Label htmlFor="phoneNumber" className="text-sm sm:text-base">
+                Phone Number
+              </Label>
               <Input
                 id="phoneNumber"
                 type="tel"
@@ -156,11 +179,12 @@ export function TeeTimeBookingForm({ onComplete }: TeeTimeBookingFormProps) {
                 required
               />
             </div>
+
             <Button
               type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              className="w-full bg-green-600 hover:bg-green-700 text-white mt-6"
             >
-              Book Tee Time
+             Proceed to Hotel Booking
             </Button>
           </form>
         </CardContent>
