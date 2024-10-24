@@ -55,6 +55,7 @@ const DesktopNav: React.FC<{ session: any }> = ({ session }) => (
 const UserMenu: React.FC<{ session: any }> = ({ session }) => {
   const isAdmin = session?.user?.role === 'admin';
   const dashboardLink = isAdmin ? "/admin" : "/dashboard";
+  const settingsLink = isAdmin ? "/admin" : "/settings";
 
   return (
     <NavigationMenuItem>
@@ -71,7 +72,7 @@ const UserMenu: React.FC<{ session: any }> = ({ session }) => {
             description={isAdmin ? "Manage club settings and users" : "View your stats and activity"}
           />
           <MenuLink
-            href="/settings"
+            href={settingsLink}
             title="Settings"
             description="Manage your preferences"
           />

@@ -27,4 +27,5 @@ const EventSchema: Schema = new Schema({
   imageUrl: { type: String, required: true },  // New field
 }, { timestamps: true });
 
-export default mongoose.models.Event || mongoose.model<IEvent>('Event', EventSchema);
+ const Event = mongoose.models.Event || mongoose.model<IEvent>('Event', EventSchema);
+ export default Event;

@@ -18,12 +18,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { getEvents, deleteEvent, addEvent, updateEvent } from "./actions";
+import {  deleteEvent, addEvent, updateEvent } from "./actions";
+import EventDetailsDialog from './details';
 
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+}
 interface Event {
   _id: string;
   title: string;
@@ -32,6 +35,9 @@ interface Event {
   startTime: string;
   endTime: string;
   capacity: number;
+  registeredUsers: User[];
+  createdBy: User;
+  imageUrl: string;
 }
 
 interface AdminEventsPageProps {
@@ -46,7 +52,7 @@ export default function AdminEventsPage({
   const [error, setError] = useState<string | null>(null);
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  const router = useRouter();
+
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
@@ -170,6 +176,8 @@ export default function AdminEventsPage({
                   {event.capacity}
                 </TableCell>
                 <TableCell>
+                <EventDetailsDialog event={event} />
+
                   <Button
                     variant="outline"
                     className="text-accent-foreground bg-accent mr-2"
@@ -202,6 +210,8 @@ export default function AdminEventsPage({
               <p>Time: {`${event.startTime} - ${event.endTime}`}</p>
               <p>Capacity: {event.capacity}</p>
               <div className="mt-4 space-x-2">
+              <EventDetailsDialog event={event} />
+
                 <Button
                   variant="outline"
                   className="text-accent-foreground bg-accent"

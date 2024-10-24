@@ -22,6 +22,26 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { addMember, updateMember, deleteMember } from "./actions";
+import MemberDetailsDialog from './details'
+
+interface Booking {
+  _id: string;
+  teeTime: {
+    date: string;
+    time: string;
+    course: {
+      name: string;
+    };
+  };
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+}
+
+interface Event {
+  _id: string;
+  title: string;
+  date: string;
+  status: 'upcoming' | 'completed' | 'cancelled';
+}
 
 interface Member {
   _id: string;
@@ -30,8 +50,10 @@ interface Member {
   email: string;
   phoneNumber: string;
   membershipTier: 'free' | 'silver' | 'gold' | 'platinum';
+  createdAt: string;
+  bookings?: Booking[];
+  events?: Event[];
 }
-
 interface MemberListProps {
   initialMembers: Member[];
 }
@@ -189,6 +211,8 @@ export default function MemberList({ initialMembers }: MemberListProps) {
                 <TableCell>{member.phoneNumber}</TableCell>
                 <TableCell>{member.membershipTier}</TableCell>
                 <TableCell>
+                <MemberDetailsDialog member={member} />
+
                   <Button
                     variant="outline"
                     className="mr-2"
@@ -222,6 +246,8 @@ export default function MemberList({ initialMembers }: MemberListProps) {
               <p><strong>Phone:</strong> {member.phoneNumber}</p>
               <p><strong>Membership:</strong> {member.membershipTier}</p>
               <div className="mt-4 space-x-2">
+              <MemberDetailsDialog member={member} />
+
                 <Button
                   variant="outline"
                   onClick={() => setEditingMember(member)}

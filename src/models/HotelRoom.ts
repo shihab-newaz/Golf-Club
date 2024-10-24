@@ -1,3 +1,4 @@
+import exp from "constants";
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IHotelRoom extends Document {
@@ -27,5 +28,5 @@ const HotelRoomSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.HotelRoom ||
-  mongoose.model<IHotelRoom>("HotelRoom", HotelRoomSchema);
+const HotelRoom =  mongoose.models.HotelRoom || mongoose.model<IHotelRoom>("HotelRoom", HotelRoomSchema);
+export default HotelRoom;

@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { addHotelRoom, updateHotelRoom, deleteHotelRoom } from "./actions";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import HotelRoomDetailsDialog from "./details";
 
 interface HotelRoom {
   _id: string;
@@ -213,6 +214,8 @@ export default function HotelRoomList({ initialRooms }: HotelRoomListProps) {
                   {room.isAvailable ? "Available" : "Not Available"}
                 </TableCell>
                 <TableCell>
+                  <HotelRoomDetailsDialog room={room} />
+
                   <Button
                     variant="outline"
                     className="mr-2"
@@ -255,6 +258,8 @@ export default function HotelRoomList({ initialRooms }: HotelRoomListProps) {
                 {room.isAvailable ? "Available" : "Not Available"}
               </p>
               <div className="mt-4 space-x-2">
+                <HotelRoomDetailsDialog room={room} />
+
                 <Button variant="outline" onClick={() => setEditingRoom(room)}>
                   Edit
                 </Button>

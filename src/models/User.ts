@@ -27,4 +27,5 @@ const UserSchema: Schema = new Schema({
   events: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
 }, { timestamps: true });
 
-export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+export default User

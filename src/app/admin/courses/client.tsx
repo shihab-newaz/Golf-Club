@@ -3,10 +3,18 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { CourseForm } from "./form";
 import { deleteCourse, addCourse, updateCourse } from "./actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import CourseDetailsDialog from "./details";
 
 interface Course {
   _id: string;
@@ -96,8 +104,8 @@ export default function CoursesClient({
         }}
       />
 
-           {/* Desktop view */}
-           <div className="hidden md:block">
+      {/* Desktop view */}
+      <div className="hidden md:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -118,6 +126,8 @@ export default function CoursesClient({
                 <TableCell>{course.difficulty}</TableCell>
                 <TableCell>{course.isOpen ? "Open" : "Closed"}</TableCell>
                 <TableCell>
+                  <CourseDetailsDialog course={course} />
+
                   <Button
                     variant="outline"
                     className="mr-2"
@@ -154,6 +164,8 @@ export default function CoursesClient({
               <p>Difficulty: {course.difficulty}</p>
               <p>Status: {course.isOpen ? "Open" : "Closed"}</p>
               <div className="mt-4 space-x-2">
+                <CourseDetailsDialog course={course} />
+
                 <Button
                   variant="outline"
                   onClick={() => {

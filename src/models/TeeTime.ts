@@ -27,5 +27,6 @@ const TeeTimeSchema: Schema = new Schema(
 // Compound index to ensure uniqueness of date and time combination
 TeeTimeSchema.index({ date: 1, time: 1 }, { unique: true });
 
-export default mongoose.models.TeeTime ||
-  mongoose.model<ITeeTime>("TeeTime", TeeTimeSchema);
+const TeeTime = mongoose.models.TeeTime || mongoose.model<ITeeTime>("TeeTime", TeeTimeSchema);
+
+export default TeeTime;

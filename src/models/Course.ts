@@ -7,7 +7,7 @@ export interface ICourse extends Document {
   holes: number;
   par: number;
   length?: number;
-  difficulty?: 'easy' | 'medium' | 'hard';
+  difficulty?: "easy" | "medium" | "hard";
   imageUrl?: string;
   isOpen: boolean;
 }
@@ -18,16 +18,18 @@ const CourseSchema: Schema = new Schema(
     description: { type: String },
     holes: { type: Number, required: true, default: 18 },
     par: { type: Number, required: true },
-    length: { type: Number }, 
-    difficulty: { 
-      type: String, 
-      required: true, 
-      enum: ['easy', 'medium', 'hard']
+    length: { type: Number },
+    difficulty: {
+      type: String,
+      required: true,
+      enum: ["easy", "medium", "hard"],
     },
     imageUrl: { type: String },
-    isOpen: { type: Boolean, default: true }
+    isOpen: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
 
-export default mongoose.models.Course || mongoose.model<ICourse>("Course", CourseSchema);
+const Course =
+  mongoose.models.Course || mongoose.model<ICourse>("Course", CourseSchema);
+export default Course;

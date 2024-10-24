@@ -28,18 +28,37 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { deleteBooking, addBooking, updateBooking } from "./actions";
+import BookingDetailsDialog from "./details";
 
+interface Room {
+  _id: string;
+  roomNumber: string;
+}
+
+interface User {
+  _id: string;
+  name: string;
+}
+
+interface TeeTime {
+  _id: string;
+  date: string;
+  time: string;
+}
 interface Booking {
   _id: string;
-  user: { name: string; _id: string };
-  teeTime: { date: string; time: string; _id: string };
-  resortRoom?: { roomNumber: string; _id: string };
+  user: User;
+  teeTime: TeeTime;
+  room?: Room;
   phoneNumber: string;
   players: number;
-  status: string;
-  expiresAt: string;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  available: boolean;
   checkInDate?: string;
   checkOutDate?: string;
+  expiresAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface BookingListProps {
@@ -88,9 +107,12 @@ export default function BookingList({
       phoneNumber: formData.get("phoneNumber"),
       players: Number(formData.get("players")),
       status: formData.get("status"),
+      available: formData.get("available") === "true",
       expiresAt: formData.get("expiresAt"),
       checkInDate: formData.get("checkInDate"),
       checkOutDate: formData.get("checkOutDate"),
+      createdAt:formData.get("createdAt"),
+      updatedAt:formData.get("updatedAt"),
     };
 
     try {
@@ -118,16 +140,17 @@ export default function BookingList({
     const bookingData = {
       user: formData.get("user"),
       teeTime: formData.get("teeTime"),
-      resortRoom:
-        formData.get("resortRoom") === "none"
-          ? null
-          : formData.get("resortRoom"),
+      resortRoom: formData.get("resortRoom"),
       phoneNumber: formData.get("phoneNumber"),
       players: Number(formData.get("players")),
       status: formData.get("status"),
+      available: formData.get("available") === "true",
       expiresAt: formData.get("expiresAt"),
       checkInDate: formData.get("checkInDate"),
       checkOutDate: formData.get("checkOutDate"),
+      createdAt:formData.get("createdAt"),
+      updatedAt:formData.get("updatedAt"),
+      
     };
 
     try {
@@ -319,7 +342,7 @@ export default function BookingList({
                 <Label htmlFor="edit-resortRoom">Resort Room (Optional)</Label>
                 <Select
                   name="resortRoom"
-                  defaultValue={editingBooking.resortRoom?._id || "none"}
+                  defaultValue={editingBooking.room?._id || "none"}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a resort room" />
@@ -436,6 +459,8 @@ export default function BookingList({
                 <TableCell>{booking.players}</TableCell>
                 <TableCell>{booking.status}</TableCell>
                 <TableCell>
+                <BookingDetailsDialog booking={booking} />
+
                   <Button
                     variant="outline"
                     className="mr-2"
@@ -474,6 +499,8 @@ export default function BookingList({
               <p>Players: {booking.players}</p>
               <p>Status: {booking.status}</p>
               <div className="mt-4 space-x-2">
+              <BookingDetailsDialog booking={booking} />
+
                 <Button
                   variant="outline"
                   onClick={() => setEditingBooking(booking)}

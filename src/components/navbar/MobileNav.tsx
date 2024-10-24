@@ -28,6 +28,7 @@ const MobileNav: React.FC<{ session: any }> = ({ session }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const isAdmin = session?.user?.role === "admin";
   const dashboardLink = isAdmin ? "/admin" : "/dashboard";
+  const settingsLink = isAdmin ? "/admin" : "/settings";
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -103,7 +104,7 @@ const MobileNav: React.FC<{ session: any }> = ({ session }) => {
                     onClick={() => setIsOpen(false)}
                   />{" "}
                   <NavLink
-                    href="/settings"
+                    href={settingsLink}
                     label="Settings"
                     onClick={() => setIsOpen(false)}
                   />
