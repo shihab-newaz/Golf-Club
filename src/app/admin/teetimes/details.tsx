@@ -56,7 +56,7 @@ const TeeTimeDetailsDialog: React.FC<TeeTimeDetailsDialogProps> = ({ teeTime }) 
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold flex items-center justify-between">
-            <span>{teeTime.course.name}</span>
+            {/* <span>{teeTime.course.name}</span> */}
             <Badge className={teeTime.isAvailable ? 'bg-green-500' : 'bg-red-500'}>
               {teeTime.isAvailable ? 'Available' : 'Unavailable'}
             </Badge>

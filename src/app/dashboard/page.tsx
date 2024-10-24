@@ -29,6 +29,8 @@ export default async function DashboardPage() {
       <DashboardClient 
         user={user}
         upcomingBookings={dashboardData.upcomingBookings}
+        completedBookings={dashboardData.completedBookings}
+        registeredEvents={dashboardData.registeredEvents}
         bookingCount={dashboardData.bookingCount}
         recentCourses={dashboardData.recentCourses}
       />

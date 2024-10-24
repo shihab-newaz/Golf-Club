@@ -13,7 +13,9 @@ import {
   Users,
   Calendar,
   Clock,
-  LandPlot,Hotel
+  LandPlot,
+  Hotel,
+  Dribbble,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -24,8 +26,9 @@ const sidebarItems = [
   { name: "Bookings", icon: Clock, href: "/admin/bookings" },
   { name: "Events", icon: Calendar, href: "/admin/events" },
   { name: "Tee Times", icon: Clock, href: "/admin/teetimes" },
-  { name: "Courses", icon: LandPlot, href: "/admin/courses" },
+  { name: "Holes", icon: LandPlot, href: "/admin/holes" },
   { name: "Rooms", icon: Hotel, href: "/admin/rooms" },
+  { name: "Courses", icon: Dribbble, href: "/admin/courses" },
   { name: "Members", icon: Users, href: "/admin/members" },
   { name: "Settings", icon: Settings, href: "/admin/settings" },
 ];
@@ -76,24 +79,21 @@ export default function AdminDashboard({
     <div className="flex min-h-screen bg-background text-foreground-alt">
       {/* Desktop Sidebar */}
       <aside className="hidden md:block fixed left-0 top-0 z-40 h-1/2 w-64 bg-background mt-16">
-        <Sidebar className="text-foreground-alt"/>
+        <Sidebar className="text-foreground-alt" />
       </aside>
 
       {/* Main content */}
       <div className="flex flex-col flex-1 md:ml-64">
         {/* Top bar */}
         <header className="fixed top-16 right-0 left-0 md:left-64 z-30 flex items-center justify-between px-4 py-4 bg-background lg:px-6">
-          <h1 className="text-2xl font-semibold text-foreground-alt">{getPageTitle()}</h1>
+          <h1 className="text-2xl font-semibold text-foreground-alt">
+            {getPageTitle()}
+          </h1>
           <div className="flex items-center gap-4">
-           
             {/* Mobile Sidebar */}
             <Sheet>
               <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="md:hidden  z-50"
-                >
+                <Button variant="ghost" size="icon" className="md:hidden  z-50">
                   <SquareMenu className="h-6 w-6" />
                   <span className="sr-only">Open sidebar</span>
                 </Button>

@@ -182,7 +182,7 @@ export default function AdminTeeTimesPage({
             <TableRow>
               <TableHead>Date</TableHead>
               <TableHead>Time</TableHead>
-              <TableHead>Course</TableHead>
+              <TableHead>Price</TableHead>
               <TableHead>Available Slots</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -194,7 +194,7 @@ export default function AdminTeeTimesPage({
                   {new Date(teeTime.date).toLocaleDateString()}
                 </TableCell>
                 <TableCell>{teeTime.time}</TableCell>
-                <TableCell>{teeTime.course.name}</TableCell>
+               <TableCell>{teeTime.price}</TableCell> 
                 <TableCell>{teeTime.availableSlots}</TableCell>
                 <TableCell className="space-x-2">
                   <TeeTimeDetailsDialog teeTime={teeTime} />
@@ -230,7 +230,7 @@ export default function AdminTeeTimesPage({
             </CardHeader>
             <CardContent>
               <p>Time: {teeTime.time}</p>
-              <p>Course: {teeTime.course.name}</p>
+             <p>Price: {teeTime.price}</p> 
               <p>Available Slots: {teeTime.availableSlots}</p>
               <div className="mt-4 space-x-2">
                 <TeeTimeDetailsDialog teeTime={teeTime} />

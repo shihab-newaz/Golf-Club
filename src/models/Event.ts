@@ -8,9 +8,10 @@ export interface IEvent extends Document {
   startTime: string;
   endTime: string;
   capacity: number;
+  availableSpots: number;
   registeredUsers: mongoose.Types.ObjectId[];
   createdBy: mongoose.Types.ObjectId;
-  imageUrl: string;  // New field
+  imageUrl: string;  
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,9 +23,10 @@ const EventSchema: Schema = new Schema({
   startTime: { type: String, required: true },
   endTime: { type: String, required: true },
   capacity: { type: Number, required: true },
+  availableSpots: { type: Number, default: 0 },
   registeredUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  imageUrl: { type: String, required: true },  // New field
+  imageUrl: { type: String, required: true }, 
 }, { timestamps: true });
 
  const Event = mongoose.models.Event || mongoose.model<IEvent>('Event', EventSchema);
