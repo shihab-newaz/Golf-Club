@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import GPSReminder from './GpsReminder';
+
 
 // Define the structure of location data we'll receive from the browser's Geolocation API
 interface LocationData {
@@ -182,6 +184,7 @@ export default function MyLocationPage() {
   return (
     <div className="container mx-auto p-4 space-y-6 mt-20">
       <h1 className="text-3xl font-bold">My Location Tracker</h1>
+      <GPSReminder />
 
       {error && (
         <Alert variant="destructive">
