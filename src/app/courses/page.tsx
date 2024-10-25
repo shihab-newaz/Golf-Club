@@ -22,13 +22,13 @@ export default async function CoursesPage() {
       <section className="container mx-auto px-4 py-12 bg-background-alt">
         {courses.map((course: any) => (
           <div key={course._id} className="mb-16">
-            <div className="mb-8">
+            <div className="mb-8 ">
               <h2 className="text-3xl font-semibold mb-4">{course.name}</h2>
               <p className="text-muted-foreground">{course.description}</p>
               
               {/* Course Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                <div className="bg-card rounded-lg p-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 ">
+                <div className="bg-card rounded-lg p-4 bg-[#fae8b4] dark:bg-background">
                   <h3 className="font-medium mb-2">Course Details</h3>
                   <ul className="space-y-2">
                     <li>Type: {course.layout.courseType}</li>
@@ -37,7 +37,7 @@ export default async function CoursesPage() {
                   </ul>
                 </div>
                 
-                <div className="bg-card rounded-lg p-4">
+                <div className="bg-card rounded-lg p-4 bg-[#fae8b4] dark:bg-background">
                   <h3 className="font-medium mb-2">Ratings</h3>
                   <ul className="space-y-2">
                     <li>Difficulty: {course.overallRating.difficulty}/5</li>
@@ -46,7 +46,7 @@ export default async function CoursesPage() {
                   </ul>
                 </div>
                 
-                <div className="bg-card rounded-lg p-4">
+                <div className="bg-card rounded-lg p-4 bg-[#fae8b4] dark:bg-background">
                   <h3 className="font-medium mb-2">Facilities</h3>
                   <ul className="space-y-2">
                     <li>Driving Range: {course.facilities.drivingRange.available ? 'Available' : 'Under Renovation'}</li>

@@ -6,8 +6,6 @@ import FeaturedCourses from "./FeaturedCourses";
 import MembershipSection from "./MembershipSection";
 import Testimonials from "./Testimonials";
 import LocationSection from "./LocationSection";
-import { getFeaturedCourses } from "./actions";
-import { FeaturedCourse } from "@/types/course";
 
 function FeaturedCoursesSkeleton() {
   return (
@@ -30,37 +28,13 @@ function FeaturedCoursesSkeleton() {
 }
 
 export default async function HomePage() {
-  let featuredCourses: FeaturedCourse[] = [];
-  
-  try {
-    featuredCourses = await getFeaturedCourses();
-    console.log('Page - Number of courses:', featuredCourses.length);
-    console.log('Page - First course data:', featuredCourses[0]);
-  } catch (error) {
-    console.error('Error in HomePage:', error);
-  }
-
-  // Guard clause to show loading state if no courses
-  if (!featuredCourses || featuredCourses.length === 0) {
-    return (
-      <div className="flex flex-col min-h-screen w-full">
-        <main className="flex-grow">
-          <HeroSection />
-          <FeaturedCoursesSkeleton />
-          <MembershipSection />
-          <LocationSection />
-          <Testimonials />
-        </main>
-      </div>
-    );
-  }
   
   return (
     <div className="flex flex-col min-h-screen w-full">
       <main className="flex-grow">
         <HeroSection />
         <Suspense fallback={<FeaturedCoursesSkeleton />}>
-          <FeaturedCourses featuredCourses={featuredCourses} />
+        <FeaturedCourses />
         </Suspense>
         <MembershipSection />
         <LocationSection />
