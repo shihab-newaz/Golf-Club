@@ -1,7 +1,6 @@
 // app/admin/events/EventClient.tsx
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -159,6 +158,7 @@ export default function AdminEventsPage({
               <TableHead className="text-foreground-alt">Date</TableHead>
               <TableHead className="text-foreground-alt">Time</TableHead>
               <TableHead className="text-foreground-alt">Capacity</TableHead>
+              <TableHead className="text-foreground-alt">Available</TableHead>
               <TableHead className="text-foreground-alt">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -174,6 +174,9 @@ export default function AdminEventsPage({
                 <TableCell className="text-foreground-alt">{`${event.startTime} - ${event.endTime}`}</TableCell>
                 <TableCell className="text-foreground-alt">
                   {event.capacity}
+                </TableCell>
+                <TableCell className="text-foreground-alt">
+                  {event.capacity - event.registeredUsers.length}
                 </TableCell>
                 <TableCell>
                 <EventDetailsDialog event={event} />
@@ -209,6 +212,7 @@ export default function AdminEventsPage({
               <p>Date: {new Date(event.date).toLocaleDateString()}</p>
               <p>Time: {`${event.startTime} - ${event.endTime}`}</p>
               <p>Capacity: {event.capacity}</p>
+              <p>Available: {event.capacity - event.registeredUsers.length}</p>
               <div className="mt-4 space-x-2">
               <EventDetailsDialog event={event} />
 

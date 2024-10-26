@@ -41,7 +41,7 @@ export default function NotFound() {
             Looks like your shot went a bit off course.
           </p>
           <p className="text-gray-500 dark:text-gray-400">
-            The page you're looking for has either been moved, deleted, or never existed.
+            The page you're looking for is under construction.
           </p>
         </div>
 
@@ -84,7 +84,7 @@ export default function NotFound() {
             </Link>
             <span className="text-gray-400">•</span>
             <Link 
-              href="/contact" 
+              href="/about" 
               className="text-green-600 dark:text-green-400 hover:underline"
             >
               Contact Us

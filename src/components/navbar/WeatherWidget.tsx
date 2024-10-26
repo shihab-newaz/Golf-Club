@@ -8,37 +8,34 @@ import { getWeatherData } from '@/app/actions/weather';
 interface WeatherData {
   temperature: number;
   condition: string;
-  timestamp: number;
+  lastUpdated: string;
 }
-
-const CACHE_DURATION = 3600000; // 1 hour in milliseconds
 
 const WeatherWidget: React.FC = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const { theme } = useTheme();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchWeather = async () => {
-      // Check localStorage for cached data
-      const cachedData = localStorage.getItem('weatherData');
-      if (cachedData) {
-        const parsedData: WeatherData = JSON.parse(cachedData);
-        if (Date.now() - parsedData.timestamp < CACHE_DURATION) {
-          setWeatherData(parsedData);
-          return;
+      try {
+        setIsLoading(true);
+        const data = await getWeatherData();
+        if (data) {
+          setWeatherData(data);
         }
-      }
-
-      // If no valid cached data, fetch new data
-      const newData = await getWeatherData();
-      if (newData) {
-        const weatherWithTimestamp = { ...newData, timestamp: Date.now() };
-        setWeatherData(weatherWithTimestamp);
-        localStorage.setItem('weatherData', JSON.stringify(weatherWithTimestamp));
+      } catch (error) {
+        console.error('Failed to fetch weather data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchWeather();
+
+    // Refresh weather data every hour
+    const intervalId = setInterval(fetchWeather, 3600000);
+    return () => clearInterval(intervalId);
   }, []);
 
   const getWeatherIcon = (condition: string) => {
@@ -60,15 +57,25 @@ const WeatherWidget: React.FC = () => {
     }
   };
 
+  if (isLoading) {
+    return <div className="animate-pulse flex items-center space-x-2 p-2 rounded-full bg-inherit shadow-md">
+      <div className="h-5 w-5 bg-gray-200 rounded-full" />
+      <div className="h-4 w-12 bg-gray-200 rounded" />
+    </div>;
+  }
+
   if (!weatherData) {
-    return null; // Or you could return a loading state here
+    return null;
   }
 
   return (
-    <div className={`flex items-center space-x-2 p-2 rounded-full bg-inherit shadow-md`}>
+    <div className="flex items-center space-x-2 p-2 rounded-full bg-inherit shadow-md">
       {getWeatherIcon(weatherData.condition)}
-      <span className={`text-sm font-semibold text-foreground`}>
+      <span className="text-sm font-semibold text-foreground">
         {weatherData.temperature}°C
+      </span>
+      <span className="sr-only">
+        Last updated: {new Date(weatherData.lastUpdated).toLocaleTimeString()}
       </span>
     </div>
   );
