@@ -14,7 +14,7 @@ import User from "@/models/User";
 import Event from "@/models/Event";
 import Booking from "@/models/Booking";
 import TeeTime from "@/models/TeeTime";
-import {Course} from "@/models/Course";
+import Course from "@/models/Course";
 
 async function getDashboardData() {
   await dbConnect();

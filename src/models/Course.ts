@@ -43,50 +43,55 @@ export interface ICourse extends Document {
   holeLayouts: string[]; // Array of individual hole layout images
 }
 
-const CourseSchema: Schema = new Schema({
-  name: { type: String, required: true },
-  description: { type: String, required: true },
-  layout: {
-    totalHoles: { type: Number, default: 18 },
-    totalPar: { type: Number, required: true },
-    courseType: { 
-      type: String, 
-      enum: ["lakeside", "links", "parkland", "desert"],
-      required: true
+const CourseSchema: Schema = new Schema(
+  {
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    layout: {
+      totalHoles: { type: Number, default: 18 },
+      totalPar: { type: Number, required: true },
+      courseType: {
+        type: String,
+        enum: ["lakeside", "links", "parkland", "desert"],
+        required: true,
+      },
+      terrain: { type: String },
+      waterFeatures: {
+        mainLake: { type: Boolean, default: false },
+        streams: { type: Boolean, default: false },
+        ponds: { type: Number, default: 0 },
+      },
     },
-    terrain: { type: String },
-    waterFeatures: {
-      mainLake: { type: Boolean, default: false },
-      streams: { type: Boolean, default: false },
-      ponds: { type: Number, default: 0 }
-    }
-  },
-  facilities: {
-    drivingRange: {
-      available: { type: Boolean, default: true },
-      underRenovation: { type: Boolean, default: false }
+    facilities: {
+      drivingRange: {
+        available: { type: Boolean, default: true },
+        underRenovation: { type: Boolean, default: false },
+      },
+      practice: {
+        puttingGreen: { type: Boolean, default: true },
+        chippingArea: { type: Boolean, default: true },
+      },
+      clubhouse: {
+        available: { type: Boolean, default: true },
+        amenities: [{ type: String }],
+      },
     },
-    practice: {
-      puttingGreen: { type: Boolean, default: true },
-      chippingArea: { type: Boolean, default: true }
+    holes: [{ type: Schema.Types.ObjectId, ref: "Hole", required: true }],
+    overallRating: {
+      difficulty: { type: Number, min: 1, max: 5 },
+      maintenance: { type: Number, min: 1, max: 5 },
+      scenic: { type: Number, min: 1, max: 5 },
     },
-    clubhouse: {
-      available: { type: Boolean, default: true },
-      amenities: [{ type: String }]
-    }
+    gpsCoordinates: {
+      latitude: { type: Number },
+      longitude: { type: Number },
+    },
+    mainImageUrls: [{ type: String, required: true }],
+    holeLayouts: [{ type: String }],
   },
-  holes: [{ type: Schema.Types.ObjectId, ref: 'Hole', required: true }],
-  overallRating: {
-    difficulty: { type: Number, min: 1, max: 5 },
-    maintenance: { type: Number, min: 1, max: 5 },
-    scenic: { type: Number, min: 1, max: 5 }
-  },
-  gpsCoordinates: {
-    latitude: { type: Number },
-    longitude: { type: Number }
-  },
-  mainImageUrls: [{ type: String, required: true }], 
-  holeLayouts: [{ type: String }]
-}, { timestamps: true });
+  { timestamps: true }
+);
+const Course =
+  mongoose.models.Course || mongoose.model<ICourse>("Course", CourseSchema);
 
-export const Course = mongoose.models.Course || mongoose.model<ICourse>("Course", CourseSchema);
+export default Course;

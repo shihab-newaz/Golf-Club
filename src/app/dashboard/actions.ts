@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/utils/authOptions";
 import dbConnect from "@/lib/mongoose";
 import Booking from "@/models/Booking";
-import {Course} from "@/models/Course";
+import Course from "@/models/Course";
 import Event from "@/models/Event";
 
 export async function getUserDashboardData() {

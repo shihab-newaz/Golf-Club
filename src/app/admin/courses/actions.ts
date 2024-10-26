@@ -3,8 +3,8 @@
 
 import { revalidatePath } from 'next/cache'
 import dbConnect from "@/lib/mongoose"
-import { Course } from "@/models/Course"
-import { Hole } from "@/models/Hole"
+import  Course  from "@/models/Course"
+import  Hole  from "@/models/Hole"
 
 export async function getCourses() {
   await dbConnect()

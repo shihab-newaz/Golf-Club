@@ -85,4 +85,5 @@ const HoleSchema: Schema = new Schema({
   imageUrl: { type: String }
 }, { timestamps: true });
 
-export const Hole = mongoose.models.Hole || mongoose.model<IHole>("Hole", HoleSchema);
+ const Hole = mongoose.models.Hole || mongoose.model<IHole>("Hole", HoleSchema);
+ export default Hole;

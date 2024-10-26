@@ -3,7 +3,7 @@
 
 import { revalidatePath } from 'next/cache'
 import dbConnect from "@/lib/mongoose"
-import { Hole } from "@/models/Hole"
+import  Hole  from "@/models/Hole"
 
 export async function getHoles() {
   await dbConnect()

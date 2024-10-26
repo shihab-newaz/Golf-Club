@@ -71,7 +71,7 @@ const WeatherWidget: React.FC = () => {
   return (
     <div className="flex items-center space-x-2 p-2 rounded-full bg-inherit shadow-md">
       {getWeatherIcon(weatherData.condition)}
-      <span className="text-sm font-semibold text-foreground">
+      <span className="text-sm font-semibold">
         {weatherData.temperature}°C
       </span>
       <span className="sr-only">

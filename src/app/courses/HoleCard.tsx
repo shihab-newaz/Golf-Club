@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { IHole } from '@/models/Hole';
 import { Waves, Shell } from 'lucide-react';
 

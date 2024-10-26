@@ -1,8 +1,8 @@
 // app/api/seed/courses/route.ts
 import { NextResponse } from "next/server"
 import dbConnect from "@/lib/mongoose"
-import { Course } from "@/models/Course"
-import { Hole } from "@/models/Hole"
+import  Course  from "@/models/Course"
+import  Hole from "@/models/Hole"
 import { coursesData, holesData } from "./data"
 
 export async function POST() {

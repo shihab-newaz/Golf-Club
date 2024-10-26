@@ -1,4 +1,3 @@
-// src/components/navbar/DesktopNav.tsx
 import Link from "next/link";
 import { LogIn, User } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -12,31 +11,32 @@ import {
 } from "@/components/ui/navigation-menu";
 
 const navLinks = [
-  { href: "/courses", label: "COURSES" },
+  { href: "/courses", label: "COURSE" },
   { href: "/events", label: "EVENTS" },
 ];
 
 const serviceLinks = [
   { href: "/booking", title: "Tee Time Booking" },
-  { href: "/services/accommodation", title: "Accommodation" },
+  { href: "/booking", title: "Accommodation" },
   { href: "/services/location", title: "Location" },
   { href: "/services/airport-pickup", title: "Airport Pickup" },
   { href: "/services/local-trip", title: "Local Trip" },
-  { href: "/services/senior-membership", title: "Senior Membership" },
+  { href: "/subscription", title: "Senior Membership" },
 ];
+
 const NavItem: React.FC<{ href: string; label: string }> = ({
   href,
   label,
 }) => (
   <NavigationMenuItem>
     <Link href={href} legacyBehavior passHref>
-      <NavigationMenuLink className="px-4 py-2 text-sm font-medium text-foreground hover:text-link">
+      <NavigationMenuLink className="px-4 py-2 text-sm font-medium hover:bg-white/10 transition-colors duration-200 backdrop-blur-sm rounded-md">
         {label}
       </NavigationMenuLink>
     </Link>
   </NavigationMenuItem>
 );
-// Navigation Menu for Desktop
+
 const DesktopNav: React.FC<{ session: any }> = ({ session }) => (
   <NavigationMenu>
     <NavigationMenuList>
@@ -45,12 +45,10 @@ const DesktopNav: React.FC<{ session: any }> = ({ session }) => (
       ))}
       <ServicesMenu />
       {session ? <UserMenu session={session} /> : <LoginItem />} 
-      <NavItem  href="/about" label="ABOUT US" />  
+      <NavItem href="/about" label="ABOUT US" />  
     </NavigationMenuList>
   </NavigationMenu>
 );
-
-
 
 const UserMenu: React.FC<{ session: any }> = ({ session }) => {
   const isAdmin = session?.user?.role === 'admin';
@@ -59,7 +57,7 @@ const UserMenu: React.FC<{ session: any }> = ({ session }) => {
 
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger className="px-4 py-2 text-sm font-medium bg-transparent hover:bg-transparent text-foreground hover:text-link">
+      <NavigationMenuTrigger className="px-4 py-2 text-sm font-medium bg-transparent hover:bg-white/10 hover:text-white transition-colors duration-200 ">
         <User className="mr-2 h-5 w-5" />
         <span>{session.user?.name}</span>
       </NavigationMenuTrigger>
@@ -87,7 +85,8 @@ const UserProfileLink: React.FC<{ session: any }> = ({ session }) => (
   <li className="row-span-3">
     <NavigationMenuLink asChild>
       <a
-        className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+        className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline 
+        outline-none focus:shadow-md hover:text-white"
         href="/"
       >
         <User className="h-6 w-6" />
@@ -111,7 +110,7 @@ const MenuLink: React.FC<{
     <NavigationMenuLink asChild>
       <a
         href={href}
-        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-white/10 "
       >
         <div className="text-sm font-medium leading-none">{title}</div>
         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
@@ -126,7 +125,7 @@ const SignOutButton: React.FC = () => (
   <li>
     <button
       onClick={() => signOut()}
-      className="w-full text-left select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+      className="w-full text-left select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-white/10 "
     >
       <div className="text-sm font-medium leading-none">Sign out</div>
       <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
@@ -139,7 +138,7 @@ const SignOutButton: React.FC = () => (
 const LoginItem: React.FC = () => (
   <NavigationMenuItem>
     <Link href="/login" legacyBehavior passHref>
-      <NavigationMenuLink className="px-4 py-2 text-sm font-medium text-foreground hover:text-link flex items-center">
+      <NavigationMenuLink className="px-4 py-2 text-sm font-medium flex items-center hover:bg-white/10 transition-colors duration-200  rounded-md">
         <LogIn className="mr-2 h-5 w-5" />
         LOGIN
       </NavigationMenuLink>
@@ -149,7 +148,7 @@ const LoginItem: React.FC = () => (
 
 const ServicesMenu: React.FC = () => (
   <NavigationMenuItem>
-    <NavigationMenuTrigger className="px-4 py-2 text-sm font-medium bg-transparent hover:bg-transparent text-foreground hover:text-link">
+    <NavigationMenuTrigger className="px-4 py-2 text-sm font-medium bg-transparent hover:bg-white/10 hover:text-white transition-colors duration-200 ">
       SERVICES
     </NavigationMenuTrigger>
     <NavigationMenuContent>
@@ -170,7 +169,7 @@ const ServiceLink: React.FC<{ href: string; title: string }> = ({
     <NavigationMenuLink asChild>
       <Link
         href={href}
-        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-white/10 "
       >
         <div className="text-sm font-medium leading-none">{title}</div>
       </Link>

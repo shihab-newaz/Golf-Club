@@ -4,7 +4,7 @@
 import { revalidatePath } from 'next/cache'
 import dbConnect from "@/lib/mongoose"
 import TeeTime from "@/models/TeeTime"
-import {Course} from "@/models/Course"
+import Course from "@/models/Course"
 
 export async function getTeeTimes() {
   await dbConnect()

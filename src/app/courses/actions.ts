@@ -1,10 +1,10 @@
 // app/courses/actions.ts
-'use server'
+"use server";
 
-import dbConnect from '@/lib/mongoose';
-import { Course } from '@/models/Course';
-import { Hole } from '@/models/Hole';
-import { cache } from 'react';
+import dbConnect from "@/lib/mongoose";
+import Course from "@/models/Course";
+import Hole from "@/models/Hole";
+import { cache } from "react";
 
 export const getCourses = cache(async () => {
   await dbConnect();
@@ -14,6 +14,7 @@ export const getCourses = cache(async () => {
 
 export const getHoles = cache(async (courseId: string) => {
   await dbConnect();
-  const course = await Course.findById(courseId).populate('holes');
+  const holes = await Hole.find({});
+  const course = await Course.findById(courseId).populate("holes");
   return JSON.parse(JSON.stringify(course.holes));
 });

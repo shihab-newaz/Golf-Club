@@ -9,10 +9,10 @@ export default async function CoursesPage() {
   const courses = await getCourses();
   
   return (
-    <main className="min-h-screen pt-16 bg-background-alt">
+    <main className="min-h-screen  bg-background-alt">
       {/* Hero Section with Carousel */}
       <section className="container">
-        <Suspense fallback={<div className="w-full h-[600px] bg-muted rounded-lg animate-pulse" />}>
+        <Suspense fallback={<div className="w-full h-[80vh] bg-muted rounded-lg animate-pulse" />}>
           <CourseCarousel courses={courses} />
           <h1 className="text-4xl font-bold text-center w-[100vw] mt-8">Course View</h1>
         </Suspense>

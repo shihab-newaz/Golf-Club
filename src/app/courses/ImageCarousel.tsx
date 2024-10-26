@@ -49,7 +49,7 @@ export default function CourseCarousel({ courses }: CourseCarouselProps) {
   };
 
   return (
-    <div className="relative h-[600px] w-[100vw]  overflow-hidden group">
+    <div className="relative h-[100vh] w-[100vw]  overflow-hidden group">
       <Image
         src={currentCourse.mainImageUrls[currentImageIndex]}
         alt={`${currentCourse.name} view ${currentImageIndex + 1}`}

@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import WeatherWidget from "@/components/navbar/WeatherWidget";
 
 const navLinks = [
-  { href: "/courses", label: "COURSES" },
+  { href: "/courses", label: "COURSE" },
   { href: "/events", label: "EVENTS" },
   { href: "/about", label: "ABOUT" },
 ];
