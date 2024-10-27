@@ -25,7 +25,7 @@ export async function updateMember(id: string, memberData: any) {
   revalidatePath('/admin/members')
   return JSON.parse(JSON.stringify(updatedMember))
 }
-
+//Todo: After deleting a member, delete their bookings, events
 export async function deleteMember(id: string) {
   await dbConnect()
   await User.findByIdAndDelete(id)

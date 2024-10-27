@@ -76,16 +76,17 @@ export default function AdminDashboard({
   };
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground-alt">
+    <div className="flex min-h-screen bg-[#121212] text-foreground-alt">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:block fixed left-0 top-0 z-40 h-1/2 w-64 bg-background mt-16">
+      <aside className="hidden md:block fixed left-0 top-0 z-40 h-1/2 w-64 bg-background/30 mt-16">
         <Sidebar className="text-foreground-alt" />
       </aside>
 
       {/* Main content */}
       <div className="flex flex-col flex-1 md:ml-64">
         {/* Top bar */}
-        <header className="fixed top-16 right-0 left-0 md:left-64 z-30 flex items-center justify-between px-4 py-4 bg-background lg:px-6">
+        <header className="absolute top-16 right-0 left-0 md:left-64 z-30 flex items-center justify-between px-4 py-4 mt-4
+          lg:px-6">
           <h1 className="text-2xl font-semibold text-foreground-alt">
             {getPageTitle()}
           </h1>

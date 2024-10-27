@@ -94,7 +94,7 @@ export default function NotFound() {
           {/* Help Text */}
           <div className="mt-8 text-sm text-gray-500 dark:text-gray-400">
             <p>Need assistance finding your way around?</p>
-            <p>Our pro shop staff is ready to help at (555) 123-4567</p>
+            <p>Our staff is ready to help at (+66) 99 065 6994</p>
           </div>
         </div>
       </div>

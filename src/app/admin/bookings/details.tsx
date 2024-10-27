@@ -82,7 +82,7 @@ const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({ booking }) 
               <div className="space-y-2">
                 <p className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
-                  <span className="font-medium">Name:</span> {booking.user.name}
+                  <span className="font-medium">Name:</span> {booking.user?.name}
                 </p>
                 <p className="flex items-center gap-2">
                   <Phone className="h-4 w-4" />

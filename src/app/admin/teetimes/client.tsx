@@ -11,39 +11,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { deleteTeeTime, addTeeTime } from "./actions";
+import { deleteTeeTime, addTeeTime, updateTeeTime } from "./actions";
 import TeeTimeDetailsDialog from "./details";
-
-interface Course {
-  _id: string;
-  name: string;
-}
+import { AddTeeTimeDialog, EditTeeTimeDialog } from "./form";
 
 interface TeeTime {
   _id: string;
-  date: Date;
+  date: string;
   time: string;
-  course: Course;
   maxPlayers: number;
   availableSlots: number;
   price: number;
@@ -62,9 +47,11 @@ export default function AdminTeeTimesPage({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isAddTeeTimeOpen, setIsAddTeeTimeOpen] = useState(false);
+  const [editingTeeTime, setEditingTeeTime] = useState<TeeTime | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchDate, setSearchDate] = useState("");
   const itemsPerPage = 30;
+
   // Filter tee times based on search date
   const filteredTeeTimes = teeTimes.filter((teeTime) => {
     if (!searchDate) return true;
@@ -117,7 +104,27 @@ export default function AdminTeeTimesPage({
       setIsLoading(false);
     }
   };
-
+  const handleUpdateTeeTime = async (data: any) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const updatedTeeTime = await updateTeeTime(
+        editingTeeTime?._id as string,
+        data
+      );
+      setTeeTimes(
+        teeTimes.map((teeTime) =>
+          teeTime._id === updatedTeeTime._id ? updatedTeeTime : teeTime
+        )
+      );
+      setEditingTeeTime(null);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to update tee time");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -132,47 +139,11 @@ export default function AdminTeeTimesPage({
           className="max-w-[200px]"
         />
         <Search />
-        <Dialog open={isAddTeeTimeOpen} onOpenChange={setIsAddTeeTimeOpen}>
-          <DialogTrigger asChild>
-            <Button className="mb-4 text-white">Add New Tee Time</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Tee Time</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleAddTeeTime} className="space-y-4">
-              <div>
-                <Label htmlFor="date">Date</Label>
-                <Input id="date" name="date" type="date" required />
-              </div>
-              <div>
-                <Label htmlFor="time">Time</Label>
-                <Input id="time" name="time" type="time" required />
-              </div>
-              <div>
-                <Label htmlFor="course">Course</Label>
-                <Input
-                  id="course"
-                  name="course"
-                  placeholder="Course Name"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="slots">Available Slots</Label>
-                <Input
-                  id="slots"
-                  name="slots"
-                  type="number"
-                  min="1"
-                  max="4"
-                  required
-                />
-              </div>
-              <Button type="submit">Add Tee Time</Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <AddTeeTimeDialog
+          isOpen={isAddTeeTimeOpen}
+          onOpenChange={setIsAddTeeTimeOpen}
+          onSubmit={handleAddTeeTime}
+        />
       </div>
 
       {/* Desktop view */}
@@ -194,15 +165,19 @@ export default function AdminTeeTimesPage({
                   {new Date(teeTime.date).toLocaleDateString()}
                 </TableCell>
                 <TableCell>{teeTime.time}</TableCell>
-               <TableCell>{teeTime.price}</TableCell> 
+                <TableCell>{teeTime.price}</TableCell>
                 <TableCell>{teeTime.availableSlots}</TableCell>
                 <TableCell className="space-x-2">
                   <TeeTimeDetailsDialog teeTime={teeTime} />
+                  <EditTeeTimeDialog
+                    isOpen={editingTeeTime?._id === teeTime._id}
+                    onOpenChange={(open) => !open && setEditingTeeTime(null)}
+                    onSubmit={handleUpdateTeeTime}
+                    initialData={teeTime}
+                  />
                   <Button
                     variant="outline"
-                    onClick={() =>
-                      router.push(`/admin/teetimes/${teeTime._id}`)
-                    }
+                    onClick={() => setEditingTeeTime(teeTime)}
                   >
                     Edit
                   </Button>
@@ -230,7 +205,7 @@ export default function AdminTeeTimesPage({
             </CardHeader>
             <CardContent>
               <p>Time: {teeTime.time}</p>
-             <p>Price: {teeTime.price}</p> 
+              <p>Price: {teeTime.price}</p>
               <p>Available Slots: {teeTime.availableSlots}</p>
               <div className="mt-4 space-x-2">
                 <TeeTimeDetailsDialog teeTime={teeTime} />

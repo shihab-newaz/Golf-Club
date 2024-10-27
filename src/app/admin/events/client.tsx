@@ -18,8 +18,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import {  deleteEvent, addEvent, updateEvent } from "./actions";
-import EventDetailsDialog from './details';
+import { deleteEvent, addEvent, updateEvent } from "./actions";
+import EventDetailsDialog from "./details";
+import EventForm from "./form";
 
 interface User {
   _id: string;
@@ -52,7 +53,6 @@ export default function AdminEventsPage({
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
-
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       setIsLoading(true);
@@ -68,38 +68,21 @@ export default function AdminEventsPage({
     }
   };
 
-  const handleAddEvent = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    const formData = new FormData(event.currentTarget);
-    const eventData = Object.fromEntries(formData.entries());
-
+  const handleAddEvent = async (data: any) => {
     try {
-      const newEvent = await addEvent(eventData);
+      const newEvent = await addEvent(data);
       setEvents([...events, newEvent]);
       setIsAddEventOpen(false);
     } catch (err) {
       console.error(err);
-      setError("Failed to add event");
-    } finally {
-      setIsLoading(false);
+      throw err;
     }
   };
 
-  const handleUpdateEvent = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleUpdateEvent = async (data: any) => {
     if (!editingEvent) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    const formData = new FormData(event.currentTarget);
-    const eventData = Object.fromEntries(formData.entries());
-
     try {
-      const updatedEvent = await updateEvent(editingEvent._id, eventData);
+      const updatedEvent = await updateEvent(editingEvent._id, data);
       setEvents(
         events.map((event) =>
           event._id === updatedEvent._id ? updatedEvent : event
@@ -108,9 +91,7 @@ export default function AdminEventsPage({
       setEditingEvent(null);
     } catch (err) {
       console.error(err);
-      setError("Failed to update event");
-    } finally {
-      setIsLoading(false);
+      throw err;
     }
   };
 
@@ -120,6 +101,8 @@ export default function AdminEventsPage({
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Manage Events</h1>
+
+      {/* Add Event Dialog */}
       <Dialog open={isAddEventOpen} onOpenChange={setIsAddEventOpen}>
         <DialogTrigger asChild>
           <Button className="mb-4 bg-button text-white">Add New Event</Button>
@@ -128,11 +111,11 @@ export default function AdminEventsPage({
           <DialogHeader>
             <DialogTitle>Add New Event</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleAddEvent} className="space-y-4">
-            {/* Form fields remain the same */}
-          </form>
+          <EventForm onSubmit={handleAddEvent} buttonText="Create Event" />
         </DialogContent>
       </Dialog>
+
+      {/* Edit Event Dialog */}
       <Dialog
         open={!!editingEvent}
         onOpenChange={(open) => !open && setEditingEvent(null)}
@@ -142,13 +125,23 @@ export default function AdminEventsPage({
             <DialogTitle>Edit Event</DialogTitle>
           </DialogHeader>
           {editingEvent && (
-            <form onSubmit={handleUpdateEvent} className="space-y-4">
-              {/* Form fields for editing */}
-            </form>
+            <EventForm
+              onSubmit={handleUpdateEvent}
+              initialData={{
+                title: editingEvent.title,
+                description: editingEvent.description,
+                date: editingEvent.date,
+                startTime: editingEvent.startTime,
+                endTime: editingEvent.endTime,
+                capacity: editingEvent.capacity,
+                imageUrl: editingEvent.imageUrl,
+              }}
+              buttonText="Update Event"
+            />
           )}
         </DialogContent>
       </Dialog>
-      
+
       {/* Desktop view */}
       <div className="hidden md:block overflow-x-auto">
         <Table className="w-full">
@@ -179,7 +172,7 @@ export default function AdminEventsPage({
                   {event.capacity - event.registeredUsers.length}
                 </TableCell>
                 <TableCell>
-                <EventDetailsDialog event={event} />
+                  <EventDetailsDialog event={event} />
 
                   <Button
                     variant="outline"
@@ -214,7 +207,7 @@ export default function AdminEventsPage({
               <p>Capacity: {event.capacity}</p>
               <p>Available: {event.capacity - event.registeredUsers.length}</p>
               <div className="mt-4 space-x-2">
-              <EventDetailsDialog event={event} />
+                <EventDetailsDialog event={event} />
 
                 <Button
                   variant="outline"

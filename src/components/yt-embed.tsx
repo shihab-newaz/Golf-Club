@@ -1,3 +1,4 @@
+// src/components/yt-embed.tsx
 import React from "react";
 
 interface YouTubeEmbedProps {

@@ -51,6 +51,6 @@ export async function validateAdminAccess() {
 
     // Handle unexpected errors
     console.error('Unexpected error during admin validation:', error)
-    redirect("/error")
+    redirect("/login?callbackUrl=/admin")
   }
 }

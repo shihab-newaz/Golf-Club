@@ -211,7 +211,7 @@ const AboutPage: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p>(555) 123-4567</p>
+                <p>(+66) 99 065 6994</p>
               </CardContent>
             </Card>
             <Card>

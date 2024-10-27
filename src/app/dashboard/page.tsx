@@ -1,39 +1,19 @@
 // app/dashboard/page.tsx
-import { Suspense } from 'react';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/utils/authOptions";
-import { redirect } from "next/navigation";
-import DashboardClient from './client';
-import { getUserDashboardData } from './actions';
+import { Suspense } from "react";
+import { getDashboardData } from "./actions";
+import DashboardClient from "./client";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
-  
-  if (!session || !session.user) {
-    redirect('/login');
-  }
-
-  const dashboardData = await getUserDashboardData();
-
-  // Ensure all required properties are present in the user object
-  const user = {
-    ...session.user,
-    id: session.user.id || '',
-    membershipTier: session.user.membershipTier || 'free',
-    role: session.user.role || 'member',
-    username: session.user.username || '',
-  };
+  const data = await getDashboardData();
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <DashboardClient 
-        user={user}
-        upcomingBookings={dashboardData.upcomingBookings}
-        completedBookings={dashboardData.completedBookings}
-        registeredEvents={dashboardData.registeredEvents}
-        bookingCount={dashboardData.bookingCount}
-        recentCourses={dashboardData.recentCourses}
-      />
-    </Suspense>
+    <div className="min-h-screen bg-[#121212] pt-20">
+      <Suspense fallback={<div>Loading dashboard...</div>}>
+        <DashboardClient data={data} />
+      </Suspense>
+    </div>
   );
 }

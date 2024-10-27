@@ -1,103 +1,126 @@
 // app/dashboard/actions.ts
-'use server'
+"use server";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/utils/authOptions";
+import { withAuth } from "@/lib/authError";
 import dbConnect from "@/lib/mongoose";
 import Booking from "@/models/Booking";
-import Course from "@/models/Course";
 import Event from "@/models/Event";
+import User from "@/models/User";
+import TeeTime from "@/models/TeeTime";
+import { DashboardData } from "./types";
 
-export async function getUserDashboardData() {
-  const session = await getServerSession(authOptions);
-  if (!session || !session.user) {
-    throw new Error("Not authenticated");
-  }
+export async function getDashboardData(
+  page = 1,
+  limit = 10
+): Promise<DashboardData> {
+  return withAuth(async () => {
+    await dbConnect();
+    const session = await getServerSession(authOptions);
+    const userId = session!.user.id;
 
-  await dbConnect();
+    const user = await User.findById(userId);
+    if (!user) {
+      throw { type: 'NOT_FOUND', message: 'User not found' };
+    }
 
-  const userId = session.user.id;
-  console.log('User ID:', userId);
+    const [totalBookings, completedBookings, upcomingBookings, currentBookings] =
+      await Promise.all([
+        Booking.countDocuments({ user: userId }),
+        Booking.countDocuments({ user: userId, status: "completed" }),
+        Booking.countDocuments({
+          user: userId,
+          status: { $in: ["confirmed", "pending"] },
+          "teeTime.date": { $gte: new Date() },
+        }),
+        Booking.find({
+          user: userId,
+          status: { $in: ["pending", "confirmed", "completed"] },
+        })
+          .sort({ "teeTime.date": -1 })
+          .populate("teeTime"),
+      ]);
 
-  // Fetch upcoming bookings (confirmed or pending)
-  const upcomingBookings = await Booking.find({
-    user: userId,
-    status: { $in: ["confirmed", "pending"] },
-    "teeTime.date": { $gte: new Date() }
-  })
-    .sort({ "teeTime.date": 1 })
-    .limit(3)
-    .populate({
-      path: "teeTime",
-      select: "date time",
-      populate: {
-        path: "course",
-        select: "name"
-      }
-    });
+    const events = await Event.find({
+      registeredUsers: userId,
+      date: { $gte: new Date() },
+    })
+      .sort({ date: 1 })
+      .populate("createdBy", "name")
+      .select(
+        "title description date startTime endTime capacity availableSpots imageUrl createdBy"
+      );
 
-  // Fetch completed bookings
-  const completedBookings = await Booking.find({
-    user: userId,
-    status: "completed"
-  })
-    .sort({ "teeTime.date": -1 })
-    .limit(5)
-    .populate({
-      path: "teeTime",
-      select: "date time",
-      populate: {
-        path: "course",
-        select: "name"
-      }
-    });
+    const skip = (page - 1) * limit;
+    const [teeTimes, totalTeeTimesCount] = await Promise.all([
+      TeeTime.find({
+        date: { $gte: new Date() },
+        isAvailable: true,
+        availableSlots: { $gt: 0 },
+      })
+        .sort({ date: 1, time: 1 })
+        .skip(skip)
+        .limit(limit),
 
-  // Fetch registered upcoming events
-  const registeredEvents = await Event.find({
-    registeredUsers: userId,
-    date: { $gte: new Date() }
-  })
-    .sort({ date: 1 })
-    .limit(3)
-    .select('title description date startTime endTime');
+      TeeTime.countDocuments({
+        date: { $gte: new Date() },
+        isAvailable: true,
+        availableSlots: { $gt: 0 },
+      }),
+    ]);
 
-  const bookingCount = await Booking.countDocuments({ user: userId });
-  const recentCourses = await Course.find().limit(3);
-
-  return {
-    upcomingBookings: JSON.parse(JSON.stringify(upcomingBookings)),
-    completedBookings: JSON.parse(JSON.stringify(completedBookings)),
-    registeredEvents: JSON.parse(JSON.stringify(registeredEvents)),
-    bookingCount,
-    recentCourses: JSON.parse(JSON.stringify(recentCourses)),
-  };
+    return {
+      stats: {
+        membershipStatus: user.membershipTier,
+        name: user.name,
+        totalBookings,
+        completedBookings,
+        upcomingBookings,
+        registeredEvents: events.length,
+        memberSince: user.createdAt,
+      },
+      bookings: JSON.parse(JSON.stringify(currentBookings)),
+      events: JSON.parse(JSON.stringify(events)),
+      teeTimes: {
+        items: JSON.parse(JSON.stringify(teeTimes)),
+        totalPages: Math.ceil(totalTeeTimesCount / limit),
+        currentPage: page,
+      },
+    };
+  });
 }
 
 export async function cancelBooking(bookingId: string) {
-  const session = await getServerSession(authOptions);
-  if (!session || !session.user) {
-    throw new Error("Not authenticated");
-  }
+  return withAuth(async () => {
+    await dbConnect();
+    const session = await getServerSession(authOptions);
+    
+    const booking = await Booking.findOne({
+      _id: bookingId,
+      user: session!.user.id,
+    });
 
-  await dbConnect();
+    if (!booking) {
+      throw { type: 'NOT_FOUND', message: 'Booking not found or unauthorized' };
+    }
 
-  const booking = await Booking.findById(bookingId);
-  if (!booking || booking.user.toString() !== session.user.id) {
-    throw new Error("Booking not found or not authorized");
-  }
+    const teeTime = await booking.populate("teeTime");
+    const bookingDate = new Date(teeTime.teeTime.date);
+    const now = new Date();
+    const hoursDifference =
+      (bookingDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-  // Check if booking is within cancellation window (e.g., 24 hours)
-  const teeTime = await booking.populate('teeTime');
-  const bookingDate = new Date(teeTime.teeTime.date);
-  const now = new Date();
-  const hoursDifference = (bookingDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    if (hoursDifference < 24) {
+      throw { 
+        type: 'VALIDATION', 
+        message: 'Bookings must be cancelled at least 24 hours in advance'
+      };
+    }
 
-  if (hoursDifference < 24) {
-    throw new Error("Bookings must be cancelled at least 24 hours in advance");
-  }
+    booking.status = "cancelled";
+    await booking.save();
 
-  booking.status = "cancelled";
-  await booking.save();
-
-  return { success: true };
+    return { success: true };
+  });
 }

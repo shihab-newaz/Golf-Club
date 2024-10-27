@@ -447,7 +447,7 @@ export default function BookingList({
           <TableBody>
             {bookings.map((booking) => (
               <TableRow key={booking._id}>
-                <TableCell>{booking.user.name}</TableCell>
+                <TableCell>{booking.user?.name}</TableCell>
                 <TableCell>
                   {booking.teeTime && booking.teeTime.date
                     ? new Date(booking.teeTime.date).toLocaleDateString()
@@ -486,7 +486,7 @@ export default function BookingList({
         {bookings.map((booking) => (
           <Card key={booking._id}>
             <CardHeader>
-              <CardTitle>{booking.user.name}</CardTitle>
+              <CardTitle>{booking.user?.name}</CardTitle>
             </CardHeader>
             <CardContent>
               <p>

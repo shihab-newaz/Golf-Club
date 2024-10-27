@@ -13,16 +13,11 @@ import {
   XCircle,
 } from 'lucide-react';
 
-interface Course {
-  _id: string;
-  name: string;
-}
 
 interface TeeTime {
   _id: string;
-  date: Date;
+  date: string;
   time: string;
-  course: Course;
   maxPlayers: number;
   availableSlots: number;
   price: number;
@@ -35,17 +30,6 @@ interface TeeTimeDetailsDialogProps {
 
 const TeeTimeDetailsDialog: React.FC<TeeTimeDetailsDialogProps> = ({ teeTime }) => {
   const [open, setOpen] = useState(false);
-
-  // Format date
-  const formatDate = (date: Date): string => {
-    return new Date(date).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -71,7 +55,7 @@ const TeeTimeDetailsDialog: React.FC<TeeTimeDetailsDialogProps> = ({ teeTime }) 
               <div className="space-y-3">
                 <p className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  <span className="font-medium">Date:</span> {formatDate(teeTime.date)}
+                  <span className="font-medium">Date:</span> {new Date(teeTime.date).toLocaleDateString('en-US')}
                 </p>
                 <p className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
