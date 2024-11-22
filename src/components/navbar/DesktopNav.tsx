@@ -17,10 +17,10 @@ const navLinks = [
 
 const serviceLinks = [
   { href: "/booking", title: "Tee Time Booking" },
-  { href: "/booking", title: "Accommodation" },
-  { href: "/services/location", title: "Location" },
-  { href: "/services/airport-pickup", title: "Airport Pickup" },
-  { href: "/services/local-trip", title: "Local Trip" },
+  { href: "/services/accommodation", title: "Accommodation" },
+  { href: "/services/tracking", title: "Tracking" },
+  { href: "/services/location", title: "Location and Transportation" },
+  { href: "/services/attractions", title: "Local Attractions" },
   { href: "/subscription", title: "Senior Membership" },
 ];
 

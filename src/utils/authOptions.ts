@@ -1,7 +1,7 @@
 // src/utils/authOptions.ts
-
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/mongoose";
 import UserModel from "@/models/User";
@@ -11,6 +11,10 @@ export const authOptions: NextAuthOptions = {
   // Configure authentication providers
   providers: [
     // Use CredentialsProvider for username/password authentication
+    GoogleProvider({
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+    }),
     CredentialsProvider({
       name: "Credentials",
       // Define the fields for the login form
@@ -29,10 +33,12 @@ export const authOptions: NextAuthOptions = {
         try {
           // Connect to the database
           await dbConnect();
-          
+
           // Find the user in the database by username
-          const user = await UserModel.findOne({ username: credentials.username });
-          
+          const user = await UserModel.findOne({
+            username: credentials.username,
+          });
+
           // If user is not found, return null (authentication fails)
           if (!user) {
             console.log("User not found");
@@ -40,8 +46,11 @@ export const authOptions: NextAuthOptions = {
           }
 
           // Compare the provided password with the hashed password in the database
-          const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
-          
+          const isPasswordCorrect = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+
           // If password is incorrect, return null (authentication fails)
           if (!isPasswordCorrect) {
             console.log("Incorrect password");
@@ -68,6 +77,39 @@ export const authOptions: NextAuthOptions = {
   ],
   // Define callbacks for customizing JWT and session handling
   callbacks: {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "google") {
+        try {
+          await dbConnect();
+          const existingUser = await UserModel.findOne({ email: user.email });
+
+          if (!existingUser) {
+            // Create new user if doesn't exist
+            const newUser = await UserModel.create({
+              name: user.name,
+              email: user.email,
+              username: profile?.email?.split("@")[0] || user.email,
+              password: await bcrypt.hash(Math.random().toString(36), 10),
+              phoneNumber: "N/A", 
+              membershipTier: "free",
+              role: "member",
+            });
+            user.id = newUser._id.toString();
+            user.membershipTier = "free";
+            user.role = "member";
+          } else {
+            // Use existing user data
+            user.id = existingUser._id.toString();
+            user.membershipTier = existingUser.membershipTier;
+            user.role = existingUser.role;
+          }
+        } catch (error) {
+          console.error("Error in Google sign in:", error);
+          return false;
+        }
+      }
+      return true;
+    },
     // The jwt callback is used to add custom fields to the JWT
     async jwt({ token, user }) {
       if (user) {
@@ -83,7 +125,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         // Add custom fields from the token to the session
         session.user.membershipTier = token.membershipTier as string;
-        session.user.role = token.role as 'member' | 'admin';
+        session.user.role = token.role as "member" | "admin";
         session.user.id = token.sub as string;
         session.user.username = token.username as string;
       }

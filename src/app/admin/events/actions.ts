@@ -3,6 +3,9 @@
 
 import { revalidatePath } from 'next/cache'
 import dbConnect from "@/lib/mongoose"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/utils/authOptions"
+import { NextResponse } from "next/server"
 import Event from "@/models/Event"
 
 export async function getEvents() {
@@ -22,17 +25,41 @@ export async function deleteEvent(id: string) {
 }
 
 export async function addEvent(eventData: any) {
-  await dbConnect()
-  const newEvent = new Event(eventData)
-  await newEvent.save()
-  
-  // Fetch the newly created event with populated fields
-  const populatedEvent = await Event.findById(newEvent._id)
-    .populate('registeredUsers', 'name email')
-    .populate('createdBy', 'name email')
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) {
+      return new NextResponse('Authentication required', { status: 401 })
+    }
+
+    await dbConnect()
     
-  revalidatePath('/admin/events')
-  return JSON.parse(JSON.stringify(populatedEvent))
+    // Add the current user's ID as createdBy
+    const newEventData = {
+      ...eventData,
+      createdBy: session.user.id,
+      availableSpots: eventData.capacity // Initialize availableSpots with capacity
+    }
+
+    const newEvent = new Event(newEventData)
+    await newEvent.save()
+
+    // Fetch the newly created event with populated fields
+    const populatedEvent = await Event.findById(newEvent._id)
+      .populate('registeredUsers', 'name email')
+      .populate('createdBy', 'name email')
+
+    revalidatePath('/admin/events')
+    return JSON.parse(JSON.stringify(populatedEvent))
+  } catch (error: unknown) {
+    console.error('Error adding event:', error)
+    if (error instanceof Error && error.name === 'ValidationError') {
+      return new NextResponse(
+        `Validation Error: ${error.message}`, 
+        { status: 400 }
+      )
+    }
+    return new NextResponse('Error adding event', { status: 500 })
+  }
 }
 
 export async function updateEvent(id: string, eventData: any) {

@@ -158,7 +158,7 @@ export default function AdminEventsPage({
           <TableBody>
             {events.map((event) => (
               <TableRow key={event._id} className="border-b border-border">
-                <TableCell className="font-medium text-foreground">
+                <TableCell className="font-medium text-foreground-alt">
                   {event.title}
                 </TableCell>
                 <TableCell className="text-foreground-alt">

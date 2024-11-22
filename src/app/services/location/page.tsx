@@ -1,319 +1,216 @@
-// app/location/my-location/page.tsx
-'use client';
+"use client";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Car, Bus, Train, Plane, Clock, MapPin, Phone, ArrowRight, LucideIcon } from "lucide-react";
 
-import React, { useState, useEffect } from 'react';
-import { MapPin, Navigation, Compass, ArrowRight } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import GPSReminder from './GpsReminder';
-
-
-// Define the structure of location data we'll receive from the browser's Geolocation API
-interface LocationData {
-  latitude: number;        // Latitude in degrees
-  longitude: number;       // Longitude in degrees
-  accuracy: number;        // Accuracy of the position in meters
-  altitude: number | null; // Altitude in meters (if available)
-  heading: number | null;  // Direction of travel in degrees (if available)
-  speed: number | null;    // Speed in meters per second (if available)
-  timestamp: number;       // Timestamp when the position was acquired
+// Define interfaces for our data structures
+interface TransportMethod {
+  icon: LucideIcon;
+  title: string;
+  details: string[];
 }
 
-// Define a fixed target location (Dhaka in this case)
-const TARGET_LOCATION = {
-  latitude: 23.8041,
-  longitude: 90.4152,
-  name: "Dhaka"
-};
+interface TransportCardProps {
+  icon: LucideIcon;
+  title: string;
+  details: string[];
+}
 
-export default function MyLocationPage() {
-  // State management using React hooks
-  const [location, setLocation] = useState<LocationData | null>(null);    // Stores current location
-  const [error, setError] = useState<string | null>(null);               // Stores any error messages
-  const [isTracking, setIsTracking] = useState(false);                   // Tracks if we're actively getting location
-  const [watchId, setWatchId] = useState<number | null>(null);           // Stores the ID for the location watcher
-  const [distance, setDistance] = useState<number | null>(null);         // Stores distance to target
-  const [bearing, setBearing] = useState<number | null>(null);           // Stores bearing to target
+// Transport methods data
+const transportMethods: TransportMethod[] = [
+  {
+    icon: Car,
+    title: "By Car",
+    details: [
+      "Distance: 519 km from Bangkok",
+      "Route: Bangkok → Saraburi → Korat (Hwy 2) → Ban Phai",
+      "Continue on Hwy 23 and 213 → Hwy 209 (Maha Sarakham-Kalasin)"
+    ]
+  },
+  {
+    icon: Bus,
+    title: "By Bus",
+    details: [
+      "The Transport Co., Ltd. provides daily services from Bangkok to Kalasin",
+      "Available at Northeastern Bus Terminal (Mo Chit 2)",
+      "Contact: +66 2 9362841-48, +66 2 9362852-66",
+      "Minivan from Khon Kaen bus station: 80 baht (1 hour journey)"
+    ]
+  },
+  {
+    icon: Train,
+    title: "By Train",
+    details: [
+      "Take train from Bangkok to Khon Kaen",
+      "Then catch a bus from Khon Kaen to Kalasin (75 km)",
+      "Services: Rapid, Express, and Air-conditioned Sprinter trains",
+      "Contact SRT: Tel. 1690 or +66 2 2204334",
+      "Khon Kaen Railway Station: +66 43 221112"
+    ]
+  },
+  {
+    icon: Plane,
+    title: "By Air",
+    details: [
+      "20+ daily flights from Suwanabhumi Airport to Khonkaen",
+      "Flight duration: ~1 hour 10 minutes",
+      "Club arranges minibus transfer from Khonkaen Airport (1 hour journey)"
+    ]
+  }
+];
 
-  // Haversine formula to calculate the great-circle distance between two points on Earth
-  const calculateDistance = (
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number
-  ): number => {
-    const R = 6371; // Earth's radius in kilometers
-    // Convert degrees to radians
-    const φ1 = (lat1 * Math.PI) / 180;
-    const φ2 = (lat2 * Math.PI) / 180;
-    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-    const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+const TransportCard: React.FC<TransportCardProps> = ({ icon: Icon, title, details }) => (
+  <Card className="h-full bg-white/5 backdrop-blur-sm border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-all duration-200">
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+        <Icon className="h-5 w-5 md:h-6 md:w-6 text-green-600" />
+        {title}
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <ul className="space-y-2">
+        {details.map((detail, index) => (
+          <li key={index} className="flex items-start gap-2 text-sm md:text-base text-gray-600 dark:text-gray-300">
+            <ArrowRight className="h-4 w-4 mt-1 flex-shrink-0 text-green-500" />
+            <span>{detail}</span>
+          </li>
+        ))}
+      </ul>
+    </CardContent>
+  </Card>
+);
 
-    // Haversine formula
-    const a =
-      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+const LocationSection: React.FC = () => {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
+  const centerLat = 16.425;
+  const centerLng = 103.275; 
+  const golfClubName = "Bueng Aram Golf & Country Club";
+  const golfClubAddress = "Yang Talat District, Kalasin 46120, Thailand";
 
-    return R * c; // Returns distance in kilometers
+  const handleOpenGoogleMaps = (): void => {
+    const encodedName = encodeURIComponent(golfClubName);
+    const encodedAddress = encodeURIComponent(golfClubAddress);
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodedName}+${encodedAddress}`;
+    window.open(url, '_blank');
   };
-
-  // Calculate the initial bearing from point 1 to point 2
-  const calculateBearing = (
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number
-  ): number => {
-    // Convert degrees to radians
-    const φ1 = (lat1 * Math.PI) / 180;
-    const φ2 = (lat2 * Math.PI) / 180;
-    const λ1 = (lon1 * Math.PI) / 180;
-    const λ2 = (lon2 * Math.PI) / 180;
-
-    // Calculate bearing
-    const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
-    const x =
-      Math.cos(φ1) * Math.sin(φ2) -
-      Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
-    const θ = Math.atan2(y, x);
-
-    // Convert radians to degrees and normalize to 0-360°
-    return ((θ * 180) / Math.PI + 360) % 360;
-  };
-
-  // Start tracking the user's location
-  const startTracking = () => {
-    // Check if browser supports geolocation
-    if (!navigator.geolocation) {
-      setError('Geolocation is not supported by your browser');
-      return;
-    }
-
-    setIsTracking(true);
-    // Watch the user's position continuously
-    const id = navigator.geolocation.watchPosition(
-      (position) => {
-        // Success callback - received new position
-        const newLocation = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-          altitude: position.coords.altitude,
-          heading: position.coords.heading,
-          speed: position.coords.speed,
-          timestamp: position.timestamp,
-        };
-        setLocation(newLocation);
-
-        // Calculate new distance to target location
-        const dist = calculateDistance(
-          newLocation.latitude,
-          newLocation.longitude,
-          TARGET_LOCATION.latitude,
-          TARGET_LOCATION.longitude
-        );
-        setDistance(dist);
-
-        // Calculate new bearing to target location
-        const bear = calculateBearing(
-          newLocation.latitude,
-          newLocation.longitude,
-          TARGET_LOCATION.latitude,
-          TARGET_LOCATION.longitude
-        );
-        setBearing(bear);
-
-        setError(null);
-      },
-      (error) => {
-        // Error callback
-        setError(error.message);
-        setIsTracking(false);
-      },
-      {
-        enableHighAccuracy: true, // Request high accuracy (uses more battery)
-        timeout: 5000,           // Time to wait for position
-        maximumAge: 0            // Don't use cached positions
-      }
-    );
-
-    setWatchId(id);
-  };
-
-  // Stop tracking the user's location
-  const stopTracking = () => {
-    if (watchId !== null) {
-      navigator.geolocation.clearWatch(watchId);
-      setWatchId(null);
-    }
-    setIsTracking(false);
-  };
-
-  // Cleanup when component unmounts
-  useEffect(() => {
-    return () => {
-      if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
-      }
-    };
-  }, [watchId]);
-
-  // Convert speed from meters/second to kilometers/hour
-  const formatSpeed = (speedInMetersPerSecond: number | null): string => {
-    if (speedInMetersPerSecond === null) return 'N/A';
-    const speedInKmH = (speedInMetersPerSecond * 3.6).toFixed(1);
-    return `${speedInKmH} km/h`;
-  };
-
-  // Format timestamp to local time string
-  const getFormattedTime = (timestamp: number): string => {
-    return new Date(timestamp).toLocaleTimeString();
-  };
-
-  // Convert bearing angle to cardinal direction (N, NE, E, SE, etc.)
-  const getDirectionFromBearing = (bearing: number): string => {
-    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-    const index = Math.round(bearing / 45) % 8;
-    return directions[index];
-  };
-
 
   return (
-    <div className="container mx-auto p-4 space-y-6 mt-20">
-      <h1 className="text-3xl font-bold">My Location Tracker</h1>
-      <GPSReminder />
-
-      {error && (
-        <Alert variant="destructive">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      <Button
-        onClick={isTracking ? stopTracking : startTracking}
-        variant={isTracking ? "destructive" : "default"}
-        className="w-full md:w-auto"
-      >
-        {isTracking ? 'Stop Tracking' : 'Start Tracking'}
-      </Button>
-
-      {location && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="col-span-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ArrowRight className="h-5 w-5" />
-                Distance to {TARGET_LOCATION.name}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold">
-                    {distance !== null ? `${distance.toFixed(2)} km` : 'Calculating...'}
-                  </span>
-                  <span className="text-muted-foreground">
-                    {bearing !== null && `Direction: ${getDirectionFromBearing(bearing)} (${Math.round(bearing)}°)`}
-                  </span>
-                </div>
-                <Separator />
-                <p className="text-sm text-muted-foreground">
-                  Target coordinates: {TARGET_LOCATION.latitude}°N, {TARGET_LOCATION.longitude}°E
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
-                Your Position
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="flex justify-between">
-                  <span className="text-muted-foreground">Latitude:</span>
-                  <span className="font-mono">{location.latitude.toFixed(6)}°</span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="text-muted-foreground">Longitude:</span>
-                  <span className="font-mono">{location.longitude.toFixed(6)}°</span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="text-muted-foreground">Accuracy:</span>
-                  <span>±{Math.round(location.accuracy)} meters</span>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Navigation className="h-5 w-5" />
-                Movement
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="flex justify-between">
-                  <span className="text-muted-foreground">Speed:</span>
-                  <span>{formatSpeed(location.speed)}</span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="text-muted-foreground">Heading:</span>
-                  <span>
-                    {location.heading ? `${Math.round(location.heading)}°` : 'N/A'}
-                  </span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="text-muted-foreground">Last Update:</span>
-                  <span>{getFormattedTime(location.timestamp)}</span>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Compass className="h-5 w-5" />
-                Quick Actions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => {
-                    const url = `https://www.google.com/maps/dir/${location.latitude},${location.longitude}/${TARGET_LOCATION.latitude},${TARGET_LOCATION.longitude}`;
-                    window.open(url, '_blank');
-                  }}
-                >
-                  Get Directions to Target
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => {
-                    const url = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
-                    window.open(url, '_blank');
-                  }}
-                >
-                  Open Your Location
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+    <div className="bg-gradient-to-r from-white to-white dark:from-gray-900 dark:to-black/60 py-8">
+      <div className="container mx-auto px-4">
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="location-info bg-amber-200/20 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
+              {golfClubName}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300">
+              Tambon Yang Talat
+            </p>
+            <p className="text-gray-600 dark:text-gray-300">
+              {golfClubAddress}
+            </p>
+            <p className="text-gray-600 dark:text-gray-300">
+              <strong>Phone:</strong> +66 42-123-4567
+            </p>
+            <p className="text-gray-600 dark:text-gray-300">
+              <strong>Email:</strong> info@buengaramgolf.com
+            </p>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-gray-800 dark:text-white">
+              Hours of Operation
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300">
+              Monday - Sunday: 6:00 AM - 7:00 PM
+            </p>
+            <Button
+              onClick={handleOpenGoogleMaps}
+              className="mt-6 bg-green-600 hover:bg-green-700 text-white"
+            >
+              <MapPin className="mr-2 h-4 w-4" /> Open in Google Maps
+            </Button>
+          </div>
+          <div className="location-map h-[400px] md:h-full bg-white dark:bg-gray-800 p-2 rounded-lg shadow-md overflow-hidden">
+            <iframe
+              src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&center=${centerLat},${centerLng}&q=Bueng+Aram+Golf+%26+Country+Club,Yang+Talat+District,Kalasin,Thailand&zoom=13`}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen={true}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
-}
+};
+
+const LocationPage: React.FC = () => {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto px-4 py-24 md:py-32">
+        {/* Hero Section */}
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-6 text-green-800 dark:text-green-400">
+            How to Reach Us
+          </h1>
+          <p className="text-base md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Multiple convenient transportation options to reach Bueng Aram Golf & Country Club
+          </p>
+        </motion.div>
+
+        {/* Map Section */}
+        <motion.div
+          className="mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <LocationSection />
+        </motion.div>
+
+        {/* Transportation Options */}
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          {transportMethods.map((method, index) => (
+            <TransportCard
+              key={index}
+              icon={method.icon}
+              title={method.title}
+              details={method.details}
+            />
+          ))}
+        </motion.div>
+
+        {/* Additional Information */}
+        <motion.div
+          className="mt-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+        >
+          <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+            <CardContent className="p-4 md:p-6">
+              <p className="text-sm md:text-base text-blue-800 dark:text-blue-200">
+                For assistance with transportation arrangements or directions, please contact our concierge service.
+                We can help arrange airport transfers and local transportation as needed.
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+export default LocationPage;

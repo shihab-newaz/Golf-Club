@@ -100,7 +100,7 @@ const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({ booking }) 
                 <p className="flex items-center gap-2">
                   <CalendarDays className="h-4 w-4" />
                   <span className="font-medium">Date:</span>
-                  {new Date(booking.teeTime.date).toLocaleDateString()}
+                  {new Date(booking?.teeTime?.date).toLocaleDateString()}
                 </p>
                 <p className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
