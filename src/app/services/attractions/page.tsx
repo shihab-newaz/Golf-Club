@@ -170,7 +170,7 @@ const AttractionsPage = () => {
                   >
                     <category.icon className="h-4 w-4 hidden md:inline" />
                     <span className="text-xs md:text-sm">
-                      {window.innerWidth < 768 ? category.title : ""} 
+                      {category.title} 
                     </span>
                   </TabsTrigger>
                 ))}
