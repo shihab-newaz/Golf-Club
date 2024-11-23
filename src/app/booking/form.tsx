@@ -115,7 +115,7 @@ export function BookingForm({ onComplete }: BookingFormProps) {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-4">
+    <div className="w-full max-w-3xl mx-auto p-4 mt-10">
       <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Reserve Your Tee Time</CardTitle>

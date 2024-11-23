@@ -7,29 +7,29 @@ import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react"
 
 export const metadata: Metadata = {
-  title: "DCC - Luxury Golf Club ",
-  description: "Experience golfing excellence at DCC. Enjoy pristine courses, luxury amenities, and exclusive memberships in a stunning setting.",
-  keywords: "golf club, luxury golf, DCC, golf membership, golf course",
-  authors: [{ name: "DCC" }],
-  creator: "DCC",
-  publisher: "DCC",
+  title: "Daeho Country Club ",
+  description: "Experience golfing excellence at Daeho Country Club. Enjoy pristine courses, luxury amenities, and exclusive memberships in a stunning setting.",
+  keywords: "golf club, luxury golf, DCC, golf membership, golf course, daeho, daeho country club",
+  authors: [{ name: "Shihab Newaz" }],
+  creator: "Shihab Newaz",
+  publisher: "Shihab Newaz",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://daehocc.vercel.app'),
+  metadataBase: new URL('https://daehocc.com'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: "DCC - Luxury Golf Club Experience",
     description: "Experience golfing excellence at KGC. Enjoy pristine courses, luxury amenities, and exclusive memberships in a stunning setting.",
-    url: 'https://daehocc.vercel.app',
-    siteName: 'Daeho Golf Club',
+    url: 'https://daehocc.com',
+    siteName: 'Daeho Country Club',
     images: [
       {
-        url: 'https://daehocc.vercel.app/og-image.jpg', 
+        url: 'https://daehocc.com/og-image.jpg', 
         width: 1200,
         height: 630,
         alt: 'DCC Golf Club',
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "DCC - Luxury Golf Club Experience",
     description: "Experience golfing excellence at KGC. Enjoy pristine courses, luxury amenities, and exclusive memberships in a stunning setting.",
-    images: ['https://daehocc.vercel.app/twitter-image.jpg'],
+    images: ['https://daehocc.com/twitter-image.jpg'],
     creator: '@shihab_newaz', 
   },
 

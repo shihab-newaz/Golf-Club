@@ -1,22 +1,23 @@
-import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
-import { IHole } from '@/models/Hole';
-import { Waves, Shell } from 'lucide-react';
+// app/courses/HoleCard.tsx
+import Image from "next/image";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button"; // Add this import
+import { IHole } from "@/models/Hole";
+import { Waves, Shell, ArrowRight } from "lucide-react"; // Add ArrowRight import
+import Link from "next/link";
 
 interface HoleCardProps {
   hole: IHole;
+  courseId: string;
 }
 
-export default function HoleCard({ hole }: HoleCardProps) {
-  
+export default function HoleCard({ hole, courseId }: HoleCardProps) {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow bg-[#fae8b4] dark:bg-background">
       <div className="grid grid-cols-2 h-full">
         {/* Image Section */}
         <div className="relative">
-          <div 
-            className="relative w-full h-full min-h-[360px]"
-          >
+          <div className="relative w-full h-full min-h-[300px]">
             <Image
               src={hole.imageUrl}
               alt={`Hole ${hole.number}`}
@@ -35,7 +36,9 @@ export default function HoleCard({ hole }: HoleCardProps) {
         <CardContent className="p-3 flex flex-col justify-between">
           <div>
             <div className="mb-2">
-              <h3 className="font-semibold text-gray-900 dark:text-white">Par {hole.par}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">
+                Par {hole.par}
+              </h3>
               <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
                 Handicap {hole.handicapStroke}
               </p>
@@ -63,22 +66,39 @@ export default function HoleCard({ hole }: HoleCardProps) {
           </div>
 
           {/* Hazards */}
-          <div className="flex flex-col gap-1 mt-2">
-            {(hole.waterHazards.left || hole.waterHazards.right || hole.waterHazards.front) && (
-              <div className="flex items-center gap-1">
-                <Waves className="h-3 w-3 text-blue-700 dark:text-blue-500" />
-                <span className="text-xs font-medium text-gray-800 dark:text-gray-200">Water</span>
-              </div>
-            )}
-            
-            {hole.bunkers.count > 0 && (
-              <div className="flex items-center gap-1">
-                <Shell className="h-3 w-3 text-amber-600 dark:text-yellow-600" />
-                <span className="text-xs font-medium text-gray-800 dark:text-gray-200">
-                  {hole.bunkers.count} Bunkers
-                </span>
-              </div>
-            )}
+          <div className="space-y-2">
+            <div className="flex flex-col gap-1">
+              {(hole.waterHazards.left ||
+                hole.waterHazards.right ||
+                hole.waterHazards.front) && (
+                <div className="flex items-center gap-1">
+                  <Waves className="h-3 w-3 text-blue-700 dark:text-blue-500" />
+                  <span className="text-xs font-medium text-gray-800 dark:text-gray-200">
+                    Water
+                  </span>
+                </div>
+              )}
+
+              {hole.bunkers.count > 0 && (
+                <div className="flex items-center gap-1">
+                  <Shell className="h-3 w-3 text-amber-600 dark:text-yellow-600" />
+                  <span className="text-xs font-medium text-gray-800 dark:text-gray-200">
+                    {hole.bunkers.count} Bunkers
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* See Details Button */}
+            <Link href={`/courses/${courseId}/holes/${hole._id}`}>
+              <Button 
+                className="w-full mt-2 bg-green-700 hover:bg-green-800 text-white dark:bg-green-600 dark:hover:bg-green-700"
+                size="sm"
+              >
+                See Details
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </CardContent>
       </div>

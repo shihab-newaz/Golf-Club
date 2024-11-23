@@ -37,7 +37,7 @@ export default async function HoleGrid({ courseId }: HoleGridProps) {
         <h1 className="text-3xl font-bold mb-6 text-center">Hole Layout</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {holes.map((hole: any) => (
-            <HoleCard key={hole._id} hole={hole} />
+            <HoleCard key={hole._id} hole={hole} courseId={courseId} />
           ))}
         </div>
       </section>
