@@ -29,10 +29,11 @@ export interface IHole extends Document {
     type: string; // "straight" | "dogleg-left" | "dogleg-right"
     fairwayWidth: "narrow" | "medium" | "wide";
   };
+  description: string;
   imageUrl: string; // Individual hole diagram
 }
 
-const HoleSchema: Schema = new Schema({
+export const HoleSchema: Schema = new Schema({
   number: { 
     type: Number, 
     required: true, 
@@ -82,6 +83,7 @@ const HoleSchema: Schema = new Schema({
       default: "medium"
     }
   },
+  description: { type: String },
   imageUrl: { type: String }
 }, { timestamps: true });
 

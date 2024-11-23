@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import dbConnect from "@/lib/mongoose"
 import TeeTime from "@/models/TeeTime"
 
-const COURSE_ID = "671ad356f6987a3c9676e957"; // You can set this to your actual course ID
+const COURSE_ID = "674122fa2302bc22bea890eb"; // We can set this to actual course ID
 
 export async function getTeeTimes() {
   await dbConnect()
@@ -36,9 +36,9 @@ export async function addTeeTime(teeTimeData: any) {
   }
 
   const newTeeTime = new TeeTime({
-    date: teeTimeData.date,
+    date: new Date(teeTimeData.date), // Convert ISO string to Date
     time: teeTimeData.time,
-    course: COURSE_ID,
+    course: COURSE_ID, // Add the course ID
     maxPlayers: teeTimeData.maxPlayers || 4,
     availableSlots: teeTimeData.availableSlots || 4,
     price: teeTimeData.price,
@@ -70,7 +70,7 @@ export async function updateTeeTime(id: string, teeTimeData: any) {
     const updatedTeeTime = await TeeTime.findByIdAndUpdate(
       id,
       {
-        date: teeTimeData.date,
+        date: new Date(teeTimeData.date),
         time: teeTimeData.time,
         course: COURSE_ID,
         maxPlayers: teeTimeData.maxPlayers || 4,

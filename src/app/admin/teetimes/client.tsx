@@ -11,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import {
   Pagination,
   PaginationContent,
@@ -23,7 +22,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { deleteTeeTime, addTeeTime, updateTeeTime } from "./actions";
 import TeeTimeDetailsDialog from "./details";
-import { AddTeeTimeDialog, EditTeeTimeDialog } from "./form";
+import { AddTeeTimeDialog, EditTeeTimeDialog } from "./dialogs";
+import { toast } from "sonner";
 
 interface TeeTime {
   _id: string;
@@ -52,14 +52,12 @@ export default function AdminTeeTimesPage({
   const [searchDate, setSearchDate] = useState("");
   const itemsPerPage = 30;
 
-  // Filter tee times based on search date
   const filteredTeeTimes = teeTimes.filter((teeTime) => {
     if (!searchDate) return true;
     const teeTimeDate = new Date(teeTime.date).toISOString().split("T")[0];
     return teeTimeDate === searchDate;
   });
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredTeeTimes.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -71,80 +69,82 @@ export default function AdminTeeTimesPage({
       try {
         await deleteTeeTime(id);
         setTeeTimes(teeTimes.filter((teeTime) => teeTime._id !== id));
+        toast.success("Tee time deleted successfully");
       } catch (err) {
         console.error(err);
-        setError("Failed to delete tee time");
+        toast.error("Failed to delete tee time");
       } finally {
         setIsLoading(false);
       }
     }
   };
 
-  const handleAddTeeTime = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleAddTeeTime = async (data: any) => {
     setIsLoading(true);
-    setError(null);
-
-    const formData = new FormData(event.currentTarget);
-    const teeTimeData = {
-      date: formData.get("date") as string,
-      time: formData.get("time") as string,
-      course: formData.get("course") as string,
-      availableSlots: Number(formData.get("slots")),
-    };
-
     try {
-      const newTeeTime = await addTeeTime(teeTimeData);
+      const newTeeTime = await addTeeTime(data);
       setTeeTimes([...teeTimes, newTeeTime]);
       setIsAddTeeTimeOpen(false);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to add tee time");
+      toast.success("Tee time added successfully");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "Failed to add tee time");
     } finally {
       setIsLoading(false);
     }
   };
+
   const handleUpdateTeeTime = async (data: any) => {
     setIsLoading(true);
-    setError(null);
     try {
-      const updatedTeeTime = await updateTeeTime(
-        editingTeeTime?._id as string,
-        data
-      );
+      const updatedTeeTime = await updateTeeTime(editingTeeTime?._id as string, data);
       setTeeTimes(
         teeTimes.map((teeTime) =>
           teeTime._id === updatedTeeTime._id ? updatedTeeTime : teeTime
         )
       );
       setEditingTeeTime(null);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to update tee time");
+      toast.success("Tee time updated successfully");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "Failed to update tee time");
     } finally {
       setIsLoading(false);
     }
   };
-  if (isLoading) return <div>Loading...</div>;
+
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Manage Tee Times</h1>
-      <div className="flex gap-2 w-full sm:w-auto">
+      <div className="flex gap-2 w-full sm:w-auto mb-4">
         <Input
           type="date"
           value={searchDate}
           onChange={(e) => setSearchDate(e.target.value)}
           className="max-w-[200px]"
         />
-        <Search />
-        <AddTeeTimeDialog
-          isOpen={isAddTeeTimeOpen}
-          onOpenChange={setIsAddTeeTimeOpen}
-          onSubmit={handleAddTeeTime}
-        />
+        <Search className="w-6 h-6" />
+        <Button onClick={() => setIsAddTeeTimeOpen(true)} className="ml-auto">
+          Add New Tee Time
+        </Button>
       </div>
+
+      <AddTeeTimeDialog
+        isOpen={isAddTeeTimeOpen}
+        onOpenChange={setIsAddTeeTimeOpen}
+        onSubmit={handleAddTeeTime}
+      />
+
+      {editingTeeTime && (
+        <EditTeeTimeDialog
+          isOpen={!!editingTeeTime}
+          onOpenChange={(open) => !open && setEditingTeeTime(null)}
+          onSubmit={handleUpdateTeeTime}
+          initialData={editingTeeTime}
+        />
+      )}
 
       {/* Desktop view */}
       <div className="hidden md:block overflow-x-auto">
@@ -165,16 +165,10 @@ export default function AdminTeeTimesPage({
                   {new Date(teeTime.date).toLocaleDateString()}
                 </TableCell>
                 <TableCell>{teeTime.time}</TableCell>
-                <TableCell>{teeTime.price}</TableCell>
+                <TableCell>${teeTime.price}</TableCell>
                 <TableCell>{teeTime.availableSlots}</TableCell>
                 <TableCell className="space-x-2">
                   <TeeTimeDetailsDialog teeTime={teeTime} />
-                  <EditTeeTimeDialog
-                    isOpen={editingTeeTime?._id === teeTime._id}
-                    onOpenChange={(open) => !open && setEditingTeeTime(null)}
-                    onSubmit={handleUpdateTeeTime}
-                    initialData={teeTime}
-                  />
                   <Button
                     variant="outline"
                     onClick={() => setEditingTeeTime(teeTime)}
@@ -205,13 +199,13 @@ export default function AdminTeeTimesPage({
             </CardHeader>
             <CardContent>
               <p>Time: {teeTime.time}</p>
-              <p>Price: {teeTime.price}</p>
+              <p>Price: ${teeTime.price}</p>
               <p>Available Slots: {teeTime.availableSlots}</p>
               <div className="mt-4 space-x-2">
                 <TeeTimeDetailsDialog teeTime={teeTime} />
                 <Button
                   variant="outline"
-                  onClick={() => router.push(`/admin/teetimes/${teeTime._id}`)}
+                  onClick={() => setEditingTeeTime(teeTime)}
                 >
                   Edit
                 </Button>
@@ -236,9 +230,7 @@ export default function AdminTeeTimesPage({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                   className="gap-1"
                 >

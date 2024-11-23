@@ -55,6 +55,7 @@ const formSchema = z.object({
     type: z.enum(holeLayoutTypes),
     fairwayWidth: z.enum(fairwayWidths),
   }),
+  description: z.string().optional(),
   imageUrl: z.string().optional(),
 });
 
@@ -99,6 +100,7 @@ const convertHoleToFormData = (hole: IHole): FormData => {
       fairwayWidth: hole.holeLayout
         .fairwayWidth as (typeof fairwayWidths)[number],
     },
+    description: hole.description,
     imageUrl: hole.imageUrl,
   };
 };
@@ -135,6 +137,7 @@ export default function HoleForm({ hole, onSuccess }: HoleFormProps) {
             type: "straight",
             fairwayWidth: "medium",
           },
+          description: "",
           imageUrl: "",
         },
   });
@@ -418,6 +421,23 @@ export default function HoleForm({ hole, onSuccess }: HoleFormProps) {
                       <SelectItem value="wide">Wide</SelectItem>
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Description */}
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Hole description" />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

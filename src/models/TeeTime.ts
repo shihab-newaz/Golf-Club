@@ -11,9 +11,9 @@ export interface ITeeTime extends Document {
   isAvailable: boolean;
 }
 
-const TeeTimeSchema: Schema = new Schema(
+export const TeeTimeSchema: Schema = new Schema(
   {
-    date: { type: Date, required: true },
+    date: { type: Date, required: true, index: true  },
     time: { type: String, required: true },
     course: { type: mongoose.Types.ObjectId, ref: "Course", required: true },
     maxPlayers: { type: Number, default: 4 },

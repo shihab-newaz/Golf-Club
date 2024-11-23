@@ -78,7 +78,7 @@ export default function AdminDashboard({
   return (
     <div className="flex min-h-screen bg-[#121212] text-foreground-alt">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:block fixed left-0 top-0 z-40 h-1/2 w-64 bg-background/30 mt-16">
+      <aside className="hidden md:block fixed left-0 top-0 z-40 h-1/2 w-64 bg-gray-800/30 mt-16">
         <Sidebar className="text-foreground-alt" />
       </aside>
 

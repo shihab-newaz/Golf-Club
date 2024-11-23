@@ -11,7 +11,7 @@ export interface IHotelRoom extends Document {
   description?: string;
 }
 
-const HotelRoomSchema: Schema = new Schema(
+export const HotelRoomSchema: Schema = new Schema(
   {
     roomNumber: { type: String, required: true, unique: true },
     type: {

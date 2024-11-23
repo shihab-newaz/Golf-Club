@@ -43,7 +43,7 @@ export interface ICourse extends Document {
   holeLayouts: string[]; // Array of individual hole layout images
 }
 
-const CourseSchema: Schema = new Schema(
+export const CourseSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     description: { type: String, required: true },

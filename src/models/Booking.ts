@@ -15,7 +15,7 @@ export interface IBooking extends Document {
   updatedAt: Date;
 }
 
-const BookingSchema: Schema = new Schema(
+export const BookingSchema: Schema = new Schema(
   {
     user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
     teeTime: { type: mongoose.Types.ObjectId, ref: "TeeTime", required: true },

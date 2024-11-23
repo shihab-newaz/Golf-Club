@@ -119,7 +119,7 @@ export default async function AdminDashboard() {
         <CardHeader>
           <CardTitle>Recent Bookings</CardTitle>
           <CardDescription>
-            You have {bookingCount} total bookings.
+            There are currently {bookingCount} total bookings.
           </CardDescription>
         </CardHeader>
         <CardContent>
